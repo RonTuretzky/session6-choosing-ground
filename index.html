@@ -223,6 +223,28 @@
 .g-bar{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:12px;color:#9c8f74;}
 #g-next{background:#1c1c15;color:var(--accent);border:1px solid var(--accent);border-radius:16px;padding:5px 14px;cursor:pointer;font-family:inherit;font-size:12px;}
 #g-next:hover{background:rgba(212,163,115,.15);}
+#rx-dims{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:300px;}
+.rx-dimhint{width:100%;font-size:9.5px;color:#8a7f66;margin-bottom:1px;}
+.rx-dim{background:rgba(255,255,255,.04);border:1px solid rgba(212,163,115,.3);border-radius:12px;padding:3px 9px;cursor:pointer;font-family:"Inter",sans-serif;font-size:10.5px;color:#e9dfc6;}
+.rx-dim:hover{border-color:var(--accent);} .rx-dim.on{background:rgba(212,163,115,.2);border-color:var(--accent);}
+.rx-dim .dv{font-family:"JetBrains Mono",monospace;font-weight:600;}
+#rx-why{margin-top:8px;font-size:11.5px;color:#e9dfc6;line-height:1.45;max-width:300px;min-height:16px;}
+/* ===== mobile / narrow screens ===== */
+@media (max-width:820px){
+  .reveal h1{font-size:1.5em;line-height:1.12;} .reveal h2{font-size:1.08em;}
+  .cols{flex-direction:column;align-items:center;gap:10px;}
+  .cols .card,.tiers .tier{max-width:100%!important;}
+  .arch-grid,.s5grid{grid-template-columns:1fr;}
+  #resx{flex-direction:column;gap:14px;align-items:center;} .rx-left,.rx-right{flex:1 1 100%;max-width:100%;width:100%;}
+  #g-quiz{flex-direction:column;gap:8px;} .qz-sliders{grid-template-columns:1fr 1fr;} .qz-out{flex:1 1 auto;border-left:none;padding-left:0;border-top:1px solid rgba(212,163,115,.3);padding-top:8px;}
+  #globe-wrap{height:300px!important;} #g-card{width:190px;font-size:9.5px;} #g-controls,#g-legend{font-size:10px;}
+  #taxlab .pick,#plan .pick{flex-direction:column;align-items:flex-start;gap:6px;}
+  .opts{flex-direction:column;align-items:stretch;} .opt{min-width:0;}
+  .qrgrid{gap:10px;} .qr{width:100px;} .qr img{width:80px;height:80px;}
+  .barchart .lab{flex-basis:150px;font-size:10px;}
+  #comment-bar .lbl{display:none;} #comment-bar textarea{height:26px;font-size:11px;}
+  .step .n{flex-basis:26px;height:26px;font-size:13px;}
+}
 </style>
 </head>
 <body>
@@ -447,9 +469,11 @@
       <select id="rx-country"></select>
       <svg id="rx-radar" viewBox="0 0 260 250"></svg>
       <div id="rx-note"></div>
+      <div id="rx-dims"></div>
+      <div id="rx-why"></div>
     </div>
   </div>
-  <aside class="notes">A dedicated stability interactive per feedback. The six dimensions — political, rule of law, safety, economic, peace/conflict, climate — are grounded in GPI 2025, WJP 2025, ND-GAIN, Fragile States, CPI and Numbeo. Drive it: switch to "currency crisis" and Turkey/Argentina/Bolivia sink while dollarized Panama/Ecuador and the Nordics hold; switch to "war in the region" and the Russia-border Baltics and Armenia drop; "climate shock" punishes arid/tropical exposure. The teaching point: "stability" isn't one number — it depends entirely on which collapse you're hedging against. Numbers are a synthesis; scan the Sources slide to verify.</aside>
+  <aside class="notes">A dedicated stability interactive per feedback. Click any of the six dimension chips to see a one-liner on WHY that country scores it. The six dimensions — political, rule of law, safety, economic, peace/conflict, climate — are grounded in GPI 2025, WJP 2025, ND-GAIN, Fragile States, CPI and Numbeo. Drive it: switch to "currency crisis" and Turkey/Argentina/Bolivia sink while dollarized Panama/Ecuador and the Nordics hold; switch to "war in the region" and the Russia-border Baltics and Armenia drop; "climate shock" punishes arid/tropical exposure. The teaching point: "stability" isn't one number — it depends entirely on which collapse you're hedging against. Numbers are a synthesis; scan the Sources slide to verify.</aside>
 </section>
 
 <!-- ARCHETYPES -->
@@ -998,6 +1022,59 @@ const STAB_LABELS=["Political","Rule of law","Safety","Economic","Peace/conflict
 const SCENARIOS={overall:[1,1,1,1,1,1],currency:[0.6,1,0.3,3,0.4,0.4],war:[1.5,0.6,0.6,0.6,3,0.3],climate:[0.4,0.5,0.4,1,0.4,3],authoritarian:[2,3,1,0.4,1.5,0.3]};
 function stabBlend(d,mode){const s=STAB6[d.c]; if(!s)return 50; const W=SCENARIOS[mode]||SCENARIOS.overall;
   let num=0,den=0; STAB_DIMS.forEach((k,i)=>{num+=W[i]*s[k];den+=W[i];}); return num/den;}
+/* One-liner "why" for each country × each stability dimension (synthesis; verify via Sources slide) */
+const STAB_WHY={
+"Italy":{pol:"Longest-serving govt since WWII, but historically churn-prone",law:"Solid courts; recent media-freedom slippage",safe:"Low violent crime; petty theft in tourist cities",econ:"Eurozone stability offset by 136%-of-GDP debt",peace:"EU/NATO core, no conflict on soil",clim:"Rising Mediterranean drought & heat, decent readiness"},
+"Spain":{pol:"Stable EU democracy; recurring Catalan tensions",law:"Independent, EU-anchored courts",safe:"Very safe; low violent crime",econ:"Eurozone; high but falling unemployment",peace:"EU/NATO, peaceful",clim:"Severe drought/heat exposure, good adaptive capacity"},
+"Portugal":{pol:"Stable, but a fragmented minority parliament",law:"Strong rule of law, low corruption",safe:"7th most peaceful country in the world",econ:"Improving credit rating, debt falling",peace:"EU/NATO, peaceful",clim:"Alentejo is a drought & wildfire hotspot"},
+"Greece":{pol:"Recovered political stability post-crisis",law:"Improving but bureaucratic, mid corruption",safe:"Safe; low violent crime",econ:"'Grecovery' — debt fell 209%→<140%",peace:"EU/NATO, but Aegean friction with Turkey",clim:"Hot, intensifying summers and fire risk"},
+"France":{pol:"Strong institutions, but frequent strikes/protests",law:"Strong courts and rule of law",safe:"Safe, though urban unrest & petty crime",econ:"Eurozone; high debt and deficits",peace:"Nuclear power, EU/NATO core",clim:"Diverse, moderate exposure, high readiness"},
+"Germany":{pol:"Very stable, orderly transitions of power",law:"Gold-standard rule of law",safe:"Safe, low violent crime",econ:"Europe's anchor economy, low debt",peace:"EU/NATO core, no conflict",clim:"Low exposure, top adaptive capacity"},
+"Finland":{pol:"Among the world's most stable states",law:"Top-ranked rule of law (WJP #3)",safe:"Very safe society",econ:"Strong, low-debt Nordic economy",peace:"NATO since 2023; long Russia border",clim:"Cold, low exposure, elite readiness"},
+"Croatia":{pol:"Stable EU member since 2013",law:"Middling corruption score (CPI 47)",safe:"Very safe, low crime",econ:"Eurozone 2023; tourism-driven",peace:"EU/NATO, Balkans calm",clim:"Adriatic mild; hot continental interior"},
+"Bulgaria":{pol:"Repeated snap elections, chronic instability",law:"Among the EU's weakest on corruption",safe:"Relatively safe",econ:"10% flat tax; joining the Eurozone",peace:"EU/NATO, no conflict",clim:"Moderate climate exposure"},
+"Romania":{pol:"Stable-ish, with recent political volatility",law:"Improving but corruption persists",safe:"Safe; low violent crime",econ:"Growing; the 10% flat-tax era is ending",peace:"EU/NATO, borders Ukraine",clim:"Moderate exposure"},
+"Latvia":{pol:"Stable EU democracy",law:"Solid, EU-anchored rule of law",safe:"Safe",econ:"Small, open EU economy",peace:"NATO, but directly on Russia's border",clim:"Cold, low exposure, good readiness"},
+"Estonia":{pol:"Very stable, digital-forward governance",law:"Strong rule of law, low corruption",safe:"Safe",econ:"0% retained-profit tax, healthy",peace:"NATO, but Russia-border risk",clim:"Cold, low exposure, high readiness"},
+"Serbia":{pol:"EU candidate, but 2024-25 protests & Vučić's grip",law:"Weak courts, high corruption",safe:"Safe streets",econ:"Growing, low flat tax",peace:"Non-aligned; unresolved Kosovo tension",clim:"Moderate exposure"},
+"Albania":{pol:"Democratic but weak institutions",law:"High corruption, organized crime",safe:"Reasonably safe for residents",econ:"Poor but growing, very cheap",peace:"NATO, Balkans calm",clim:"Warm Mediterranean, moderate exposure"},
+"Georgia":{pol:"Acute 2024-26 crisis: disputed vote, daily protests",law:"Courts under pressure; EU path frozen",safe:"Very safe streets (high Numbeo safety)",econ:"Cheap and low-tax, but crisis risk",peace:"Russia occupies 20% of its territory",clim:"Moderate, but poor rural readiness"},
+"Armenia":{pol:"Fragile politics since the 2020 war",law:"Reforming, mid corruption",safe:"Safe society",econ:"Cheap, low tax",peace:"Unresolved conflict with Azerbaijan",clim:"Arid highlands, low readiness"},
+"Kazakhstan":{pol:"Authoritarian; deadly 2022 unrest",law:"Weak courts, high corruption",safe:"Moderately safe",econ:"Oil-backed, 10% flat tax",peace:"Stable borders but Russia-adjacent",clim:"Harsh continental & arid, low readiness"},
+"Turkey":{pol:"Erdoğan consolidation, İmamoğlu jailed, mass protests",law:"Judiciary under the executive (worst due-process globally)",safe:"Fairly safe day-to-day",econ:"~32-50% inflation, lira at record lows",peace:"Iran-war spillover — missiles intercepted over it",clim:"Med/arid + major earthquake risk"},
+"Cyprus":{pol:"Stable EU south",law:"EU rule of law, some legacy weaknesses",safe:"Very safe island",econ:"Non-dom tax haven, solid",peace:"Island still divided; north occupied",clim:"Hot, dry and water-scarce"},
+"Morocco":{pol:"Stable monarchy, a regional outlier",law:"Reforming, mid corruption",safe:"Safe for visitors",econ:"Growing; Green Morocco plan",peace:"Stable, though Western Sahara dispute",clim:"Arid, drought-prone, low-mid readiness"},
+"Japan":{pol:"Very stable, orderly politics",law:"Strong rule of law",safe:"Among the safest places on Earth",econ:"Wealthy but high debt, weak yen",peace:"Stable; regional tension with China/NK",clim:"Typhoon & earthquake exposure, high readiness"},
+"South Korea":{pol:"Stable democracy, but a 2024 martial-law shock",law:"Strong courts",safe:"Very safe",econ:"Advanced, resilient economy",peace:"North Korea sits on the border",clim:"Typhoon exposure, good readiness"},
+"Thailand":{pol:"Coup-prone, heavy military influence",law:"Weak courts, mid corruption",safe:"Fairly safe; occasional unrest",econ:"Stable-ish tourism economy",peace:"Generally peaceful",clim:"Tropical flood & heat exposure"},
+"Malaysia":{pol:"Stable multi-ethnic democracy",law:"Mid rule of law",safe:"Reasonably safe",econ:"Diversified, territorial tax",peace:"Very peaceful (GPI top 15)",clim:"Humid tropics, flood exposure"},
+"Indonesia":{pol:"Stable democracy, huge and diverse",law:"Weak courts, corruption",safe:"Fairly safe",econ:"Fast-growing, young economy",peace:"Mostly peaceful",clim:"Seismic/volcanic + flood risk, low readiness"},
+"Philippines":{pol:"Democratic but volatile",law:"Weak courts, corruption",safe:"Higher crime, some insurgency",econ:"Growing, remittance-driven",peace:"Insurgencies + South China Sea tension",clim:"Typhoon-battered — very high climate risk"},
+"Vietnam":{pol:"Stable one-party state",law:"Party-controlled courts",safe:"Very safe streets",econ:"Fast-growing, dynamic",peace:"Peaceful; South China Sea friction",clim:"Delta flood & typhoon exposure, low readiness"},
+"Nepal":{pol:"Sept-2025 uprising, interim govt, 2026 snap vote",law:"Weak; corruption drove the unrest",safe:"Fairly safe",econ:"Poor, remittance-reliant",peace:"Landlocked and peaceful",clim:"Himalayan hazards — very high vulnerability"},
+"India":{pol:"Stable democracy, vast and uneven",law:"Overburdened courts, corruption",safe:"Variable; property crime",econ:"Fast-growing but uneven",peace:"Border tensions with Pakistan & China",clim:"Heat/monsoon/water stress, low readiness"},
+"Sri Lanka":{pol:"Recovering from the 2022 collapse",law:"Mid courts, reforming",safe:"Fairly safe post-crisis",econ:"IMF recovery, still fragile",peace:"Peaceful since the civil war",clim:"Cyclone (Ditwah 2025) & flood exposure"},
+"Mexico":{pol:"Stable federal democracy",law:"Weak courts, widespread impunity",safe:"Cartel violence, high homicide rates",econ:"Large; nearshoring tailwind",peace:"Internal cartel conflict",clim:"Diverse; drought & hurricane exposure"},
+"Costa Rica":{pol:"Oldest stable democracy in the region, no army",law:"Solid rule of law by regional standards",safe:"Safe, but rising theft",econ:"Stable, diversified",peace:"No military; very peaceful",clim:"Biodiverse; storm & heavy-rain exposure"},
+"Panama":{pol:"Stable, dollarized state",law:"Mid courts, some corruption",safe:"Reasonably safe",econ:"Dollarized hub economy, resilient",peace:"Peaceful",clim:"Tropical, flood exposure"},
+"Ecuador":{pol:"Unstable; 2024 security crisis",law:"Weak courts",safe:"Crime surged with cartel violence",econ:"Dollarized (a stabilizer)",peace:"Declared internal 'armed conflict' in 2024",clim:"Andes/coast; quake & El Niño exposure"},
+"Colombia":{pol:"Stabilizing but polarized",law:"Weak in conflict zones",safe:"Improved, but regional violence",econ:"Diversified, growing",peace:"Residual armed groups",clim:"Flood & landslide exposure"},
+"Guatemala":{pol:"Weak institutions, elite capture",law:"High corruption and impunity",safe:"High crime",econ:"Cheap, remittance-driven",peace:"Post-civil-war gang violence",clim:"Dry-corridor drought + hurricane exposure"},
+"Uruguay":{pol:"The most stable state in the region",law:"Best rule of law in Latin America",safe:"Safe; some property crime",econ:"Stable, investment-grade",peace:"Very peaceful",clim:"Temperate; periodic drought"},
+"Paraguay":{pol:"Democratic but one-party dominant",law:"Weak courts, high corruption (CPI 24)",safe:"Fairly safe in rural areas",econ:"Cheap, stable-ish, low tax",peace:"Very peaceful, landlocked",clim:"Chaco heat/drought; milder east"},
+"Argentina":{pol:"Democratic; turbulent Milei reform era",law:"Functioning but politicized courts",safe:"Fairly safe by regional standards",econ:"Chronic inflation & currency chaos",peace:"Peaceful",clim:"Temperate, varied, moderate exposure"},
+"Chile":{pol:"Most developed/stable regionally; 2026 Kast shift",law:"Strongest institutions in the region",safe:"Safe-ish; rising concern",econ:"Stable, investment-grade",peace:"Peaceful",clim:"Diverse; drought & quake exposure"},
+"Brazil":{pol:"Democratic but deeply polarized",law:"Independent courts, uneven reach",safe:"High urban crime",econ:"Large but volatile",peace:"Peaceful externally",clim:"Amazon/semi-arid; deforestation & drought"},
+"Bolivia":{pol:"Severe 2024-26 crisis, state of emergency",law:"Weak, politicized courts",safe:"Moderate",econ:"Dollar shortage, ~15-20% inflation",peace:"Internal unrest and blockades",clim:"Altiplano/tropical extremes, low readiness"},
+"Namibia":{pol:"Stable democracy",law:"Decent by regional standards",safe:"Moderate crime",econ:"Small, mineral-based",peace:"Very peaceful",clim:"Arid desert, water-scarce, low readiness"},
+"Rwanda":{pol:"Stable & orderly (governance is debated)",law:"Efficient but authoritarian",safe:"Among Africa's safest",econ:"Growing, well-run",peace:"Peaceful internally; DRC border tension",clim:"Fertile hills but climate-vulnerable"},
+"Tanzania":{pol:"Stable, developing institutions",law:"Weak courts, corruption",safe:"Fairly safe",econ:"Growing, agrarian",peace:"Peaceful",clim:"Tropical drought/flood, low readiness"},
+"Ghana":{pol:"One of Africa's steadier democracies",law:"Reasonable by regional standards",safe:"Fairly safe",econ:"Recent debt distress",peace:"Very peaceful",clim:"Coastal + dry north, low readiness"},
+"South Africa":{pol:"Stable democracy under a coalition govt",law:"Strong courts but weak enforcement",safe:"Very high violent crime",econ:"Diversified but stagnant, power cuts",peace:"No war, but high internal violence",clim:"Drought (Cape) and water stress"},
+"New Zealand":{pol:"Very stable",law:"Top-tier rule of law",safe:"Very safe",econ:"Advanced, stable",peace:"Remote and peaceful (GPI #3)",clim:"Temperate, low exposure, high readiness"},
+"United States":{pol:"Stable but deeply polarized",law:"Strong but strained institutions",safe:"Higher violent crime, guns",econ:"Wealthy, resilient, reserve currency",peace:"No conflict at home; heavy global exposure",clim:"Hurricane/wildfire exposure, high capacity"},
+"Canada":{pol:"Very stable",law:"Top rule of law",safe:"Safe, low violent crime",econ:"Advanced, resource-rich",peace:"Remote and peaceful",clim:"Cold, wildfire risk, high adaptive capacity"}
+};
 const LENS_IDX={LAND:0,VISA:1,TAX:2,LAW:3,LIFE:4,STAB:5};
 const LENS_COL={LAND:"#4a9a5a",VISA:"#4f86c6",TAX:"#d9a441",LAW:"#9a6fb0",LIFE:"#3fb0a0",STAB:"#8a94a6"};
 // Colour-blind-safe viridis scale (indigo→teal→green→yellow). No red/green confusion; low=indigo, high=yellow.
@@ -1268,7 +1345,8 @@ computeTax();
   const board=document.getElementById('rx-board'); if(!board)return;
   const sel=document.getElementById('rx-country'), radar=document.getElementById('rx-radar'), note=document.getElementById('rx-note');
   const SCEN_LABEL={overall:'overall resilience',currency:'a currency crisis',war:'war in the region',climate:'a climate shock',authoritarian:'an authoritarian turn'};
-  let scen='overall', country=null;
+  let scen='overall', country=null, activeDim=null;
+  const dimsEl=document.getElementById('rx-dims'), whyEl=document.getElementById('rx-why');
   const has=DATA.filter(d=>STAB6[d.c]);
   sel.innerHTML=has.slice().sort((a,b)=>a.c.localeCompare(b.c)).map(d=>`<option value="${d.c}">${d.c}</option>`).join('');
   function renderBoard(){
@@ -1290,8 +1368,17 @@ computeTax();
     g+=`<polygon points="${dp}" fill="${col}" fill-opacity="0.28" stroke="${col}" stroke-width="2"/>`;
     STAB_DIMS.forEach((k,i)=>{const r=s[k]/100*maxR;g+=`<circle cx="${cx+r*Math.cos(ang(i))}" cy="${cy+r*Math.sin(ang(i))}" r="2.5" fill="${col}"/>`;});
     g+=`<text x="${cx}" y="${cy-2}" font-size="20" font-weight="700" fill="${col}" text-anchor="middle" font-family="Inter,sans-serif">${over}</text><text x="${cx}" y="${cy+13}" font-size="8" fill="#9c8f74" text-anchor="middle" font-family="Inter,sans-serif">/100</text>`;
-    radar.innerHTML=g;
+    radar.innerHTML=g; renderDims(); renderWhy();
     note.innerHTML=`<b style="color:var(--wheat)">${country}</b> vs <b>${SCEN_LABEL[scen]}</b> → <span style="color:${col};font-family:'JetBrains Mono',monospace">${over}/100</span>. ${DATA.find(d=>d.c===country).stab}`;
+  }
+  function renderDims(){ if(!dimsEl)return; const s=STAB6[country]; if(!s){dimsEl.innerHTML='';return;}
+    dimsEl.innerHTML='<div class="rx-dimhint">↓ click a dimension for why</div>'+STAB_DIMS.map((k,i)=>`<button class="rx-dim ${activeDim===k?'on':''}" data-k="${k}"><span>${STAB_LABELS[i]}</span> <span class="dv" style="color:${scoreColor(s[k],100)}">${s[k]}</span></button>`).join('');
+    dimsEl.querySelectorAll('.rx-dim').forEach(b=>b.addEventListener('click',()=>{activeDim=b.dataset.k;renderDims();renderWhy();}));
+  }
+  function renderWhy(){ if(!whyEl)return;
+    if(!activeDim){whyEl.innerHTML='<span style="color:#8a7f66">Pick a dimension above to see why it scores that.</span>';return;}
+    const i=STAB_DIMS.indexOf(activeDim), w=(STAB_WHY[country]||{})[activeDim];
+    whyEl.innerHTML=`<b style="color:var(--wheat)">${STAB_LABELS[i]} ${STAB6[country][activeDim]}/100</b> — ${w||'—'}`;
   }
   document.querySelectorAll('#resx .rx-sc').forEach(b=>b.addEventListener('click',()=>{scen=b.dataset.s;document.querySelectorAll('#resx .rx-sc').forEach(x=>x.classList.toggle('on',x===b));renderBoard();renderRadar();}));
   sel.addEventListener('change',()=>{country=sel.value;renderRadar();renderBoard();});
@@ -1333,7 +1420,7 @@ computeTax();
 })();
 
 /* ============ REVEAL + zoom + comments ============ */
-Reveal.initialize({hash:true,slideNumber:'c/t',width:1280,height:760,margin:0.045,minScale:0.2,maxScale:1.6,
+Reveal.initialize({hash:true,slideNumber:'c/t',width:1280,height:760,margin:0.035,minScale:0.05,maxScale:1.6,
   transition:'fade',plugins:[RevealNotes]});
 Reveal.on('ready',()=>{renderQuiz();maybeGlobe();updateComment();});
 Reveal.on('slidechanged',()=>{maybeGlobe();updateComment();renderQuiz();setTimeout(resizeGlobe,60);});
