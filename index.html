@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Session 6 — Choosing Ground</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" id="theme" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+<style>
+:root{
+  --bg:#14140f; --paper:#FAF7F2; --ink:#2a2622; --muted:#b9a77a;
+  --land:#2D5A3D; --scale:#B5651D; --caution:#8B0000; --accent:#d4a373; --wheat:#f5deb3;
+  --lensLAND:#4a9a5a; --lensVISA:#4f86c6; --lensTAX:#d9a441; --lensLAW:#9a6fb0; --lensLIFE:#3fb0a0; --lensSTAB:#8a94a6;
+}
+.reveal{font-family:"Cormorant Garamond",Georgia,serif;color:#f3ead3;background:var(--bg);}
+.reveal h1,.reveal h2,.reveal h3,.reveal h4{font-family:"Inter",Helvetica,Arial,sans-serif;letter-spacing:-0.01em;text-transform:none;color:var(--wheat);}
+.reveal h1{font-size:2.0em;line-height:1.1;}
+.reveal h2{font-size:1.35em;}
+.reveal h3{font-size:1.02em;color:var(--accent);}
+.reveal .slides>section,.reveal .slides>section>section{max-height:100%!important;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;padding:6px 10px 26px;}
+.reveal section img.scene{background:none;border:none;box-shadow:0 6px 20px rgba(0,0,0,.5);max-height:420px;border-radius:2px;}
+.reveal .lede{color:var(--accent);font-style:italic;}
+.reveal .small{font-size:0.66em;} .reveal .tiny{font-size:0.48em;color:#9c8f74;font-family:"Inter",sans-serif;}
+.reveal .mono{font-family:"JetBrains Mono",monospace;}
+.reveal blockquote{border-left:3px solid var(--accent);padding:.35em 1em;background:rgba(212,163,115,.08);font-style:italic;width:92%;font-size:.95em;}
+.reveal blockquote cite{display:block;font-style:normal;font-size:.5em;margin-top:.3em;color:var(--muted);font-family:"Inter",sans-serif;}
+.reveal a{color:var(--accent);}
+.reveal .sources,.reveal .credit{font-size:.42em;color:#8a7f66;font-family:"Inter",sans-serif;font-style:italic;margin-top:.4em;}
+.reveal table{font-size:.6em;margin:0 auto;} .reveal th{color:var(--wheat);border-bottom:1px solid var(--accent);} .reveal td{border:none;}
+.reveal .kicker{font-family:"JetBrains Mono",monospace;font-size:.42em;letter-spacing:.28em;color:var(--accent);text-transform:uppercase;}
+.pill{display:inline-block;font-family:"Inter",sans-serif;font-size:.5em;padding:2px 9px;border-radius:11px;border:1px solid var(--accent);color:var(--accent);margin:2px;}
+.cols{display:flex;gap:22px;align-items:flex-start;justify-content:center;flex-wrap:wrap;}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(212,163,115,.28);border-radius:8px;padding:12px 16px;text-align:left;}
+.card h3{margin:0 0 6px;} .card p{font-size:.62em;margin:.25em 0;line-height:1.35;}
+.lens-tag{font-family:"Inter",sans-serif;font-size:.56em;font-weight:600;padding:2px 8px;border-radius:5px;color:#111;display:inline-block;margin:2px;}
+.tri{display:flex;gap:0;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:10px;}
+.tri .node{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-family:"Inter",sans-serif;font-weight:600;font-size:.62em;margin:-6px;color:#0d0d0a;}
+
+/* ===== interactive: globe ===== */
+#globe-wrap,#quiz-wrap{position:relative;width:100%;height:600px;max-height:74vh;}
+#globe-canvas{width:100%;height:100%;display:block;cursor:grab;border-radius:8px;background:radial-gradient(circle at 50% 40%,#10131c,#0a0a08 70%);}
+#globe-canvas:active{cursor:grabbing;}
+.g-panel{position:absolute;font-family:"Inter",sans-serif;background:rgba(14,14,10,.82);border:1px solid rgba(212,163,115,.4);border-radius:8px;backdrop-filter:blur(6px);}
+#g-controls{top:10px;left:10px;padding:8px 10px;font-size:12px;color:var(--accent);}
+#g-controls select{background:#1c1c15;color:var(--wheat);border:1px solid var(--accent);border-radius:5px;padding:3px 6px;font-family:inherit;font-size:12px;margin-top:4px;}
+#g-legend{bottom:10px;left:10px;padding:8px 10px;font-size:11px;color:#cdbf9a;}
+#g-legend{font-size:12px;}
+#g-legend .bar{height:12px;width:190px;border-radius:6px;background:linear-gradient(90deg,#46327e,#3b528b,#21918c,#5ec962,#fde725);margin:5px 0 3px;border:1px solid rgba(255,255,255,.15);}
+#g-legend .ends{display:flex;justify-content:space-between;width:190px;font-family:"JetBrains Mono",monospace;font-size:10px;color:#cdbf9a;}
+#g-card{top:10px;right:10px;width:290px;max-height:92%;overflow-y:auto;padding:12px 14px;color:#e9dfc6;font-size:11.5px;line-height:1.4;display:none;text-align:left;}
+#g-card h3{color:var(--wheat);margin:0 0 2px;font-size:16px;} #g-card .verdict{color:var(--accent);font-style:italic;font-family:"Cormorant Garamond",serif;font-size:14px;margin:6px 0;}
+#g-card .row{margin:3px 0;} #g-card .k{color:var(--accent);font-weight:600;}
+#g-card .scores{display:flex;gap:3px;margin:6px 0;flex-wrap:wrap;}
+#g-card .sc{font-size:10px;font-weight:600;color:#111;border-radius:4px;padding:2px 5px;}
+.hint{font-family:"Inter",sans-serif;font-size:11px;color:#8a7f66;}
+
+/* ===== interactive: questionnaire ===== */
+#quiz-wrap{display:flex;gap:18px;height:auto;max-height:none;text-align:left;flex-wrap:wrap;}
+#quiz-controls{flex:1 1 340px;font-family:"Inter",sans-serif;}
+#quiz-results{flex:1 1 380px;font-family:"Inter",sans-serif;}
+.slider-row{display:flex;align-items:center;gap:10px;margin:7px 0;}
+.slider-row label{flex:0 0 128px;font-size:12.5px;font-weight:600;}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent);}
+.slider-row .wv{flex:0 0 20px;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);text-align:right;}
+.preset{font-family:"Inter",sans-serif;font-size:11px;background:#1c1c15;color:var(--accent);border:1px solid var(--accent);border-radius:14px;padding:4px 10px;margin:3px 3px 0 0;cursor:pointer;}
+.preset:hover{background:rgba(212,163,115,.18);}
+#quiz-list{list-style:none;padding:0;margin:6px 0;counter-reset:r;}
+#quiz-list li{display:flex;align-items:center;gap:10px;padding:6px 8px;margin:4px 0;border-radius:6px;background:rgba(255,255,255,.03);border-left:3px solid var(--accent);}
+#quiz-list li .rank{font-family:"JetBrains Mono",monospace;color:var(--accent);font-size:13px;width:20px;}
+#quiz-list li .nm{flex:1;font-size:13px;color:var(--wheat);}
+#quiz-list li .fit{font-family:"JetBrains Mono",monospace;font-size:12px;color:#cdbf9a;}
+#quiz-list li .barwrap{flex:0 0 90px;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+#quiz-list li .barfill{height:100%;background:linear-gradient(90deg,#3b528b,#21918c,#5ec962,#fde725);}
+.blindable.blind{filter:blur(6px);opacity:.55;}
+
+/* ===== master table ===== */
+#mt-wrap{font-family:"Inter",sans-serif;font-size:11px;max-height:74vh;overflow:auto;}
+#mt{border-collapse:collapse;width:100%;font-size:11px;}
+#mt th{position:sticky;top:0;background:#1c1c15;cursor:pointer;padding:6px 7px;color:var(--wheat);border-bottom:1px solid var(--accent);white-space:nowrap;}
+#mt th:hover{color:var(--accent);}
+#mt td{padding:5px 7px;border-bottom:1px solid rgba(212,163,115,.12);}
+#mt tr{cursor:pointer;} #mt tbody tr:hover{background:rgba(212,163,115,.08);}
+#mt .cell-s{font-family:"JetBrains Mono",monospace;text-align:center;color:#111;border-radius:3px;font-weight:600;}
+#mt .comp{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;}
+
+/* zoom + comments */
+#zoom-controls{position:fixed;bottom:16px;right:16px;z-index:1200;display:flex;gap:6px;background:rgba(20,20,20,.7);border:1px solid var(--accent);border-radius:22px;padding:4px 8px;backdrop-filter:blur(6px);font-family:"Inter",sans-serif;}
+#zoom-controls button{width:30px;height:30px;border:none;background:transparent;color:var(--accent);font-size:17px;font-weight:600;cursor:pointer;border-radius:50%;}
+#zoom-controls button:hover{background:rgba(212,163,115,.2);} #zoom-controls .zoom-level{display:flex;align-items:center;color:var(--accent);font-size:11px;min-width:34px;justify-content:center;font-family:"JetBrains Mono",monospace;}
+#comment-bar{position:fixed;bottom:0;left:0;right:0;z-index:1100;background:rgba(12,12,9,.92);border-top:1px solid rgba(212,163,115,.4);padding:5px 12px;font-family:"Inter",sans-serif;display:flex;align-items:center;gap:8px;}
+#comment-bar textarea{flex:1;background:#17170f;color:#e9dfc6;border:1px solid rgba(212,163,115,.3);border-radius:6px;font-family:inherit;font-size:12px;padding:5px 8px;resize:none;height:30px;}
+#comment-bar .lbl{font-size:10px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;}
+@media print{#zoom-controls,#comment-bar{display:none!important;}}
+.reveal.print-pdf #zoom-controls,.reveal.print-pdf #comment-bar{display:none!important;}
+.reveal .slides section .fragment.visible{opacity:1;}
+/* ===== revised-slide graphics ===== */
+.steps{display:flex;flex-direction:column;gap:9px;max-width:840px;margin:8px auto;text-align:left;}
+.step{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.03);border-left:3px solid var(--accent);border-radius:7px;padding:8px 12px;}
+.step .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--accent);color:#14140f;font-family:"Inter",sans-serif;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.step .b{flex:1;} .step h3{margin:0 0 2px;font-size:.86em;} .step p{margin:0;font-size:.6em;line-height:1.35;}
+.barchart{max-width:760px;margin:14px auto 0;text-align:left;font-family:"Inter",sans-serif;}
+.barchart .r{display:flex;align-items:center;gap:10px;margin:6px 0;}
+.barchart .lab{flex:0 0 250px;font-size:12px;color:#e9dfc6;} .barchart .lab b{color:var(--wheat);}
+.barchart .track{flex:1;height:15px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;}
+.barchart .fill{height:100%;border-radius:8px;}
+.barchart .val{flex:0 0 70px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);text-align:right;}
+.tiers{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
+.tier{flex:1 1 250px;max-width:300px;border-radius:10px;padding:12px 14px;text-align:left;border:1px solid rgba(255,255,255,.12);}
+.tier h3{margin:0 0 7px;font-size:.86em;display:flex;align-items:center;gap:8px;color:var(--wheat);}
+.tier .chips{display:flex;flex-wrap:wrap;gap:5px;}
+.tier .chip{font-family:"Inter",sans-serif;font-size:10.5px;padding:2px 8px;border-radius:11px;background:rgba(255,255,255,.09);color:#e9dfc6;}
+.tier.own{background:rgba(53,128,54,.13);border-color:#4a9a5a;} .tier.lease{background:rgba(180,130,30,.14);border-color:#d9a441;} .tier.no{background:rgba(150,70,70,.16);border-color:#c0645a;}
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:920px;margin:10px auto;}
+.arch{border-radius:10px;overflow:hidden;text-align:left;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);}
+.arch .band{padding:8px 14px;font-family:"Inter",sans-serif;font-weight:700;color:#14140f;display:flex;align-items:center;gap:9px;font-size:.8em;}
+.arch .body{padding:9px 14px;} .arch .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
+.arch .chip{font-family:"Inter",sans-serif;font-size:10.5px;padding:2px 8px;border-radius:11px;background:rgba(255,255,255,.09);color:#f3ead3;}
+.arch p{margin:0;font-size:.6em;line-height:1.4;}
+.s5grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:880px;margin:12px auto;}
+.s5{background:rgba(255,255,255,.03);border-radius:9px;padding:11px 15px;text-align:left;border-left:3px solid var(--accent);}
+.s5 h3{margin:0 0 4px;font-size:.86em;display:flex;gap:8px;align-items:center;color:var(--wheat);} .s5 p{margin:.25em 0;font-size:.6em;line-height:1.35;}
+.s5 .good{color:#8fd08f;} .s5 .catch{color:#e0a0a0;}
+#quiz-top{font-family:"Inter",sans-serif;background:linear-gradient(90deg,rgba(94,201,98,.16),rgba(253,231,37,.10));border:1px solid var(--accent);border-radius:8px;padding:9px 13px;margin-bottom:9px;font-size:15px;color:#e9dfc6;}
+#quiz-top b{color:var(--wheat);font-size:18px;} #quiz-top .mono{color:var(--accent);}
+.two-box{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:6px 0 2px;}
+.two-box .bx{flex:1 1 240px;max-width:300px;border-radius:9px;padding:10px 14px;text-align:left;font-family:"Inter",sans-serif;font-size:12px;}
+/* ===== real triangle ===== */
+.tri2{position:relative;width:540px;height:310px;margin:8px auto 0;}
+.tri2 svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.tri2 .node{position:absolute;width:138px;height:138px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-family:"Inter",sans-serif;font-weight:700;font-size:.62em;color:#0d0d0a;transform:translate(-50%,-50%);box-shadow:0 4px 18px rgba(0,0,0,.55);}
+.tri2 .t-top{left:270px;top:74px;} .tri2 .t-bl{left:118px;top:246px;} .tri2 .t-br{left:422px;top:246px;}
+.tri2 .elab{position:absolute;font-family:"Inter",sans-serif;font-size:11px;font-style:italic;color:var(--accent);transform:translate(-50%,-50%);text-align:center;width:170px;}
+/* ===== merged globe + quiz ===== */
+#g-quiz{margin-top:8px;display:flex;gap:16px;align-items:stretch;font-family:"Inter",sans-serif;text-align:left;}
+.qz-sliders{flex:1 1 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px 18px;align-content:center;}
+.qz-sliders .sr{display:flex;align-items:center;gap:7px;}
+.qz-sliders label{flex:0 0 92px;font-size:10.5px;font-weight:600;}
+.qz-sliders input[type=range]{flex:1;accent-color:var(--accent);height:13px;}
+.qz-sliders .wv{flex:0 0 12px;font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--accent);}
+.qz-out{flex:0 0 320px;border-left:1px solid rgba(212,163,115,.3);padding-left:14px;}
+#quiz-top5{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+#quiz-top5 .chip{font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,.08);color:#e9dfc6;}
+.qz-out .preset{font-size:9.5px;padding:3px 8px;margin:5px 3px 0 0;}
+/* ===== CTA plan builder ===== */
+#plan{max-width:740px;margin:10px auto 0;font-family:"Inter",sans-serif;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(212,163,115,.35);border-radius:9px;padding:12px 16px;}
+#plan .pick{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px;color:#cdbf9a;}
+#plan select{background:#1c1c15;color:var(--wheat);border:1px solid var(--accent);border-radius:5px;padding:4px 7px;font-family:inherit;font-size:12px;}
+#plan-out{margin-top:10px;font-size:12px;color:#e9dfc6;line-height:1.55;}
+#plan-out b{color:var(--wheat);}
+.hw{max-width:780px;margin:6px auto;text-align:left;}
+.hw ol{padding-left:20px;} .hw li{font-size:.6em;line-height:1.45;margin:8px 0;}
+.hw li b{color:var(--wheat);}
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- 1 TITLE -->
+<section data-background-color="#14140f">
+  <p class="kicker">Design an Agrarian Industrial Commune · Session 6</p>
+  <h1 style="margin:.2em 0">Choosing Ground</h1>
+  <p class="lede" style="font-size:1.1em">Legal structures, revenue, the market — and where in the world a commune actually pencils out.</p>
+  <p class="small" style="margin-top:1.2em">A 50-country decision engine: quality of life ⇄ cost of land ⇄ visa difficulty.</p>
+  <p class="tiny">The Convent · Greenpoint, Brooklyn &nbsp;|&nbsp; press <span class="mono">→</span> to begin · <span class="mono">o</span> for overview · <span class="mono">c</span> toggles notes</p>
+  <aside class="notes">Session 5 asked "is this possible?" — land, equipment, legal entity, economies of scale. Session 6 asks the next question every group hits: WHERE. This deck ends on an interactive globe and a questionnaire so people can find their own fit. The through-line: you almost never get cheap land + easy visa + high quality of life at once. The craft is knowing which corner to trade away.</aside>
+</section>
+
+<!-- 3 THE TRIANGLE -->
+<section>
+  <p class="kicker">The opportunity</p>
+  <h2>Three dials you get to tune</h2>
+  <div class="tri2">
+    <svg viewBox="0 0 540 310"><polygon points="270,74 118,246 422,246" fill="none" stroke="#d4a373" stroke-width="1.5" stroke-opacity="0.55" stroke-dasharray="5 5"/></svg>
+    <div class="node t-top" style="background:var(--lensLIFE)">Quality<br>of life</div>
+    <div class="node t-bl" style="background:var(--lensLAND)">Affordable<br>land</div>
+    <div class="node t-br" style="background:var(--lensVISA)">An open<br>door</div>
+    <div class="elab" style="left:186px;top:150px">cheap land +<br>high QoL</div>
+    <div class="elab" style="left:354px;top:150px">QoL +<br>open door</div>
+    <div class="elab" style="left:270px;top:290px">cheap land + open door</div>
+  </div>
+  <p class="small" style="margin-top:18px;max-width:770px;margin-left:auto;margin-right:auto">Here's the good news the map hides: the strongest jurisdictions already hand you <b>two of these outright</b>, and there are real, legal ways to finesse the third. Depopulating Europe pairs <b>cheap land with high quality of life</b>. Easy-residency Latin America pairs <b>cheap land with an open door</b>. You don't have to win all three — you match the trade to <i>your</i> people.</p>
+  <p class="lede">Pick the corner that fits your group, and the rest of this deck finds it for you.</p>
+  <aside class="notes">Reframed optimistically per feedback — a menu of real options, not a story of sacrifice. The seed is the Dec-7 talk's Land Economics slide. A retirement-weighted group finesses the visa via passive-income routes; a young remote-work group via nomad/entrepreneur visas or an easy-residency country. The globe and questionnaire ahead turn this into a concrete shortlist.</aside>
+</section>
+
+<!-- 4 THE RUBRIC -->
+<section>
+  <h2>Scoring a jurisdiction — six lenses</h2>
+  <p class="small">Each country scored <b>0–3</b> per lens. The sum (0–18) drives the globe and the questionnaire. Same discipline as Sessions 3–4's PROP/GOV/LAB/MEM/OUT — turned outward to the world.</p>
+  <div class="cols" style="gap:10px">
+    <div class="card" style="border-left:3px solid var(--lensLAND);max-width:250px"><h3 style="color:var(--lensLAND)">LAND</h3><p>Cheap rural/farmland, abandoned-house programs, and — critically — <b>may foreigners own it?</b></p></div>
+    <div class="card" style="border-left:3px solid var(--lensVISA);max-width:250px"><h3 style="color:var(--lensVISA)">VISA</h3><p>Is there a real pathway to move a <b>group</b> and reach permanent residency?</p></div>
+    <div class="card" style="border-left:3px solid var(--lensTAX);max-width:250px"><h3 style="color:var(--lensTAX)">TAX</h3><p>Income, gains, wealth; treatment of co-ops, foreign income & pensions; crypto.</p></div>
+  </div>
+  <div class="cols" style="gap:10px;margin-top:8px">
+    <div class="card" style="border-left:3px solid var(--lensLAW);max-width:250px"><h3 style="color:var(--lensLAW)">LAW</h3><p>Communal-ownership vehicles (co-op, CLT, foundation) + permissive rural zoning.</p></div>
+    <div class="card" style="border-left:3px solid var(--lensLIFE);max-width:250px"><h3 style="color:var(--lensLIFE)">LIFE</h3><p>Quality of life, affordable healthcare, safety, climate & climate resilience.</p></div>
+    <div class="card" style="border-left:3px solid var(--lensSTAB);max-width:250px"><h3 style="color:var(--lensSTAB)">STAB</h3><p>Political stability, rule of law, and collapse/geopolitical hedge value.</p></div>
+  </div>
+  <aside class="notes">Stress that LAND is not just price — foreign ownership is the hidden killer. A "3" needs cheap land AND foreigners able to hold it AND a cheap-house or depopulation angle. LAW rewards a purpose-built vehicle: Spain's cooperativa de explotación comunitaria de la tierra, Paraguay's Mennonite co-op precedent. Scores are a synthesis of 2026 research, deliberately opinionated, meant to provoke argument — invite the class to contest them on the globe.</aside>
+</section>
+
+<!-- 5 LEGAL STRUCTURES -->
+<section>
+  <h2>Two questions, not twenty forms</h2>
+  <p class="small" style="max-width:720px;margin:0 auto 4px">Forget the paperwork zoo. Holding a commune together comes down to <b>separating two layers</b> — then copying a template that already works.</p>
+  <div class="cols" style="gap:14px;margin-top:12px">
+    <div class="card" style="max-width:270px;border-left:3px solid var(--lensLAND)">
+      <h3 style="color:var(--lensLAND)">🏛️ Who <i>holds</i> it</h3>
+      <p>A <b>trust, foundation or community land trust</b> owns the land — permanently, off the market, with no owner to buy out. It can never be sold out from under the community.</p>
+    </div>
+    <div class="card" style="max-width:270px;border-left:3px solid var(--lensLAW)">
+      <h3 style="color:#b98fd0">🤝 Who <i>runs</i> it</h3>
+      <p>A <b>cooperative</b> operates on top: it farms, trades, employs, and shares the surplus — usually one-member-one-vote. Where foreigners can't own land, a company holds title for the co-op.</p>
+    </div>
+    <div class="card" style="max-width:270px;border-left:3px solid var(--scale)">
+      <h3 style="color:var(--scale)">🌾 Who's <i>done</i> it</h3>
+      <p>You don't have to invent this. <b>Communities the world over</b> have held and farmed land together for generations — living templates you can adapt.</p>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:14px">Lock the land in a trust. Run the farm as a co-op. Copy a template that's lasted a century.</p>
+  <aside class="notes">Deliberately high-level per feedback. The one idea: separate the permanent land-HOLDING layer (trust/foundation/CLT — never sold) from the OPERATING layer (co-op that trades and employs). The Mennonite colonies in Paraguay/Bolivia are the strongest proof a foreign group can do this for generations. Vehicle-by-vehicle mechanics belong in a handout, not the slide.</aside>
+</section>
+
+<!-- 7 TAX -->
+<section>
+  <h2>Work the tax bill in four moves</h2>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="b"><h3>Choose territorial over worldwide</h3><p>Georgia, Panama, Paraguay, Costa Rica & Uruguay simply <b>don't tax foreign income</b> — the biggest single lever for remote earners and pensioners.</p></div></div>
+    <div class="step"><div class="n">2</div><div class="b"><h3>Stack a pensioner regime</h3><p>Italy <b>7%</b> flat · Greece <b>7%</b> for 15 yrs · Portugal <b>10%</b> on pensions — and they sit in the exact cheap-land regions.</p></div></div>
+    <div class="step"><div class="n">3</div><div class="b"><h3>Let the co-op be taxed once</h3><p>Patronage dividends are typically taxed a <b>single time, at the member</b> — a structural edge a plain company doesn't get.</p></div></div>
+    <div class="step"><div class="n">4</div><div class="b"><h3>Dodge the three traps</h3><p>US citizens owe tax <b>worldwide</b> (credits, not escape) · golden-visa / NHR regimes are <b>closing</b> (PT/ES/GR, 2023–26) · crypto swings 0% → punitive → illegal.</p></div></div>
+  </div>
+  <p class="tiny" style="text-align:center;margin-top:10px">Illustrative effective take on €50k of foreign income, by strategy:</p>
+  <div class="barchart">
+    <div class="r"><div class="lab"><b>Territorial</b> — Georgia / Panama / Paraguay</div><div class="track"><div class="fill" style="width:3%;background:#fde725"></div></div><div class="val">~0%</div></div>
+    <div class="r"><div class="lab"><b>Pensioner regime</b> — Italy / Greece</div><div class="track"><div class="fill" style="width:9%;background:#9bd84e"></div></div><div class="val">7–10%</div></div>
+    <div class="r"><div class="lab"><b>Standard EU resident</b> — Spain / France</div><div class="track"><div class="fill" style="width:42%;background:#21918c"></div></div><div class="val">35–45%</div></div>
+    <div class="r"><div class="lab"><b>US citizen</b> — taxed wherever you live</div><div class="track"><div class="fill" style="width:55%;background:#3b528b"></div></div><div class="val">worldwide</div></div>
+  </div>
+  <aside class="notes">Rebuilt step-by-step with a chart per feedback. Key correction: cheap-land depopulation countries (Italy/Greece/Portugal) built pensioner regimes overlapping the exact cheap-land regions — tax and land strategy align for a retirement-weighted group. The bar chart is illustrative, not a quote — the point is the spread from ~0% (territorial) to worldwide (US citizen). The golden-visa/NHR window is closing, so 2021 advice is stale.</aside>
+</section>
+
+<!-- 8 ZONING -->
+<section>
+  <h2>First question on any parcel: can you own it?</h2>
+  <div class="tiers">
+    <div class="tier own"><h3>✅ Own it freely</h3><div class="chips">
+      <span class="chip">Most of Europe</span><span class="chip">Japan</span><span class="chip">S. Korea</span><span class="chip">Mexico</span><span class="chip">Costa Rica</span><span class="chip">Panama</span><span class="chip">Uruguay</span><span class="chip">Paraguay</span><span class="chip">Namibia</span><span class="chip">US</span><span class="chip">Canada</span></div></div>
+    <div class="tier lease"><h3>🟡 Company or lease only</h3><div class="chips">
+      <span class="chip">Croatia (non-EU)</span><span class="chip">Thailand</span><span class="chip">Indonesia</span><span class="chip">Philippines</span><span class="chip">Sri Lanka</span><span class="chip">Ghana</span><span class="chip">Rwanda</span></div></div>
+    <div class="tier no"><h3>⛔ Barred from farmland</h3><div class="chips">
+      <span class="chip">Nepal</span><span class="chip">India</span><span class="chip">Vietnam</span><span class="chip">Brazil</span><span class="chip">Bolivia</span><span class="chip">Kazakhstan</span><span class="chip">Georgia (ag)</span></div></div>
+  </div>
+  <div class="card" style="max-width:830px;margin:14px auto 0;border-left:3px solid var(--lensLAW)">
+    <h3 style="color:var(--lensLAW)">🚧 …and then: can you build on it?</h3>
+    <p class="small">Agricultural land ≠ buildable. Italy caps building at 0.03 m³/m² and wants a <i>registered farmer</i>. Greece needs a 4,000 m² minimum + road frontage. Spain's anti-fragmentation rules cap subdivision; Portugal's protected soils forbid building outright.</p>
+  </div>
+  <p class="lede" style="margin-top:12px">Cheap land you can't own — or can't build on — scores a <b>zero</b>, whatever the price tag says.</p>
+  <aside class="notes">Rebuilt as traffic-light tiers with icons (reads without colour too) per feedback. Reframes the "cheap land" fantasy: a $500/ha price in Thailand or Bali is a mirage for a foreign group. The winners on LAND are cheap AND allow foreign freehold AND let you build a small settlement — depopulating Europe and easy-title Latin America.</aside>
+</section>
+
+<!-- 9 IMMIGRATION -->
+<section>
+  <h2>There is no "commune visa"</h2>
+  <p class="lede" style="max-width:840px;margin:0 auto">No country admits an intentional community <i>as a unit</i>. Every adult qualifies individually — a 5–30 person move is 5–30 parallel cases. So you mix routes:</p>
+  <table style="font-size:.72em;max-width:920px;margin-top:16px">
+    <tr><th style="text-align:left">Route</th><th style="text-align:left">Who it fits</th><th style="text-align:left">Where</th></tr>
+    <tr><td>🏖️ <b>Passive-income / retirement</b></td><td>Members with pensions or savings</td><td>Italy ERV · Spain NLV · Portugal D7 · Costa Rica pensionado</td></tr>
+    <tr><td>💻 <b>Digital nomad</b></td><td>Remote earners</td><td>Greece · Croatia · Georgia · Sri Lanka (2026)</td></tr>
+    <tr><td>🚜 <b>Entrepreneur / self-employed</b></td><td>The farm co-op itself</td><td>Portugal D2 · Spain autónomo</td></tr>
+    <tr><td>🚪 <b>Easy-residency / low-bar</b></td><td>The whole group at once</td><td>Paraguay · Panama · Uruguay · Georgia (1-yr visa-free)</td></tr>
+    <tr><td>🧬 <b>Ancestry / diaspora</b></td><td>Eligible members</td><td>Ghana Right of Abode · EU ancestry</td></tr>
+  </table>
+  <p class="small" style="margin-top:16px;max-width:840px;margin-left:auto;margin-right:auto">Real groups run a <b>patchwork</b>: retirees on passive-income visas, workers on nomad/entrepreneur visas, a few who won't qualify at all. Budget a lawyer and a staggered, multi-year arrival — <b>Paraguay is the rare place you can move the whole group easily.</b></p>
+  <aside class="notes">Reformatted per feedback — full-width table with room to breathe. The most important honesty in the deck: the fantasy is "we all move together next spring"; the reality is a 12–24 month staggered process where some members may not qualify. Paraguay stands out for actually moving a whole group (no income proof, PR in 2 years); Georgia's 1-year visa-free entry lets a group land and plan.</aside>
+</section>
+
+<!-- GLOBE + QUESTIONNAIRE (merged) -->
+<section data-background-color="#0a0a08">
+  <h2 style="margin-bottom:4px">The world, scored — explore &amp; tune <span class="hint">drag · click a country · move the sliders</span></h2>
+  <div id="globe-wrap" style="height:410px">
+    <canvas id="globe-canvas"></canvas>
+    <div class="g-panel" id="g-controls">
+      Colour by:<br>
+      <select id="g-metric">
+        <option value="comp">Commune-suitability (total)</option>
+        <option value="LAND">LAND — land & ownership</option>
+        <option value="VISA">VISA — group residency</option>
+        <option value="TAX">TAX — tax burden</option>
+        <option value="LAW">LAW — communal vehicles</option>
+        <option value="LIFE">LIFE — quality of life</option>
+        <option value="STAB">STAB — stability</option>
+      </select>
+    </div>
+    <div class="g-panel" id="g-legend"><div style="margin-bottom:2px"><b id="g-metric-lbl" style="color:var(--wheat)">total suitability</b></div><div class="bar"></div><div class="ends"><span>◔ lower</span><span>higher ●</span></div></div>
+    <div class="g-panel" id="g-card"></div>
+  </div>
+  <div id="g-quiz">
+    <div class="qz-sliders">
+      <div class="sr"><label style="color:var(--lensLAND)">Cheap land</label><input type="range" min="0" max="5" value="3" data-lens="LAND"><span class="wv">3</span></div>
+      <div class="sr"><label style="color:var(--lensVISA)">Easy visa</label><input type="range" min="0" max="5" value="3" data-lens="VISA"><span class="wv">3</span></div>
+      <div class="sr"><label style="color:var(--lensTAX)">Low tax</label><input type="range" min="0" max="5" value="2" data-lens="TAX"><span class="wv">2</span></div>
+      <div class="sr"><label style="color:var(--lensLAW)">Communal law</label><input type="range" min="0" max="5" value="2" data-lens="LAW"><span class="wv">2</span></div>
+      <div class="sr"><label style="color:var(--lensLIFE)">Quality of life</label><input type="range" min="0" max="5" value="3" data-lens="LIFE"><span class="wv">3</span></div>
+      <div class="sr"><label style="color:var(--lensSTAB)">Stability</label><input type="range" min="0" max="5" value="3" data-lens="STAB"><span class="wv">3</span></div>
+      <div style="grid-column:1/4;margin-top:3px">
+        <button class="preset" data-p="land">Cheap land + visa</button>
+        <button class="preset" data-p="digital">Low-tax digital</button>
+        <button class="preset" data-p="qol">Safe & high QoL</button>
+        <button class="preset" data-p="hedge">Hedge</button>
+        <button class="preset" data-p="balanced">Balanced</button>
+        <button class="preset" id="quiz-blind" style="border-color:#c0645a;color:#c0645a">🙈 Blind</button>
+      </div>
+    </div>
+    <div class="qz-out">
+      <div id="quiz-top" class="blindable">Move a slider (or hit a preset) to see your match…</div>
+      <div id="quiz-top5" class="blindable"></div>
+    </div>
+  </div>
+  <p class="tiny" id="globe-fallback" style="display:none;color:#c0645a">WebGL globe unavailable here — click a country in the archetype cards instead.</p>
+  <aside class="notes">Globe and questionnaire merged into one interactive page per feedback. Drive it live: recolor by LAND to show the foreign-ownership cliff; move the sliders and watch the globe + top-6 re-rank. Click any country for its full card — now including visa specifics (thresholds, durations, processing time, PR/citizenship timeline). The bright cluster is the thesis: depopulating Europe + easy-residency Latin America. Click Paraguay, Uruguay, Georgia, Spain, Costa Rica for the strongest all-round cases; Nepal, Brazil, Bolivia for instructive red lights.</aside>
+</section>
+
+<!-- ARCHETYPES -->
+<section>
+  <h2>Four ways people actually do it</h2>
+  <div class="arch-grid">
+    <div class="arch"><div class="band" style="background:#5ec962">🌾 The depopulation play</div><div class="body"><div class="chips"><span class="chip">Italy</span><span class="chip">Spain</span><span class="chip">Portugal</span><span class="chip">Greece</span><span class="chip">Japan</span></div><p>Cheap emptying villages, high quality of life, pensioner tax breaks. The wall is the one-by-one visa. Best if your group skews toward <b>retirees living on pensions or savings</b> — they're the ones who qualify for the passive-income visas.</p></div></div>
+    <div class="arch"><div class="band" style="background:#4f86c6">🚪 Easy-residency Latin</div><div class="body"><div class="chips"><span class="chip">Paraguay</span><span class="chip">Uruguay</span><span class="chip">Panama</span><span class="chip">Ecuador</span></div><p>Move the <b>whole group</b> in with little friction, own land freely, pay no tax on foreign income — and there are communities here that have <b>farmed together for generations</b>. The trade: weaker institutions.</p></div></div>
+    <div class="arch"><div class="band" style="background:#d9a441">💻 Low-tax digital</div><div class="body"><div class="chips"><span class="chip">Georgia</span><span class="chip">Serbia</span><span class="chip">Albania</span><span class="chip">Estonia</span></div><p>1-year visa-free entry, flat or no-foreign-income tax, dirt cheap. The catch is owning the land (Georgia bars farmland). Best if members <b>keep remote jobs and pool the income</b>.</p></div></div>
+    <div class="arch"><div class="band" style="background:#3fb0a0">🛡️ Quality-of-life premium</div><div class="body"><div class="chips"><span class="chip">Costa Rica</span><span class="chip">New Zealand</span><span class="chip">Uruguay</span></div><p>Top-tier safety, healthcare and stability. You just pay more for the land, and New Zealand's visa is hard. Choose this when <b>peace of mind matters more than price</b>.</p></div></div>
+  </div>
+  <p class="lede" style="margin-top:12px">Pick the archetype from who's in the room — then a country within it.</p>
+  <aside class="notes">Rebuilt as a visual 2×2 per feedback. Map to the group's actual composition — there's no universal winner. Pick the archetype first from who's in the room (retirees? remote workers? families?), THEN the country. The Mennonite colonies in Paraguay/Bolivia are the single most-proven template for foreigners farming communally at scale.</aside>
+</section>
+
+<!-- 13 HEALTHCARE / PENSION / EQUIPMENT -->
+<section>
+  <h2>The Session-5 cost stack — by jurisdiction</h2>
+  <p class="small">The economies of scale from S5 don't travel uniformly. Healthcare and pensions especially swing on <i>where</i> you land. (Each country's own read sits on its globe card.)</p>
+  <div class="s5grid">
+    <div class="s5"><h3>🏥 Healthcare</h3><p><span class="good">Best:</span> universal & cheap — Spain, Portugal, Italy, Greece, Costa Rica, Uruguay.</p><p><span class="catch">Catch:</span> rural gaps everywhere; Georgia & Nepal poor outside cities; US cost.</p></div>
+    <div class="s5"><h3>👵 Pensions</h3><p><span class="good">Best:</span> foreign pension untaxed — Georgia, Panama, Paraguay, Uruguay; 7–10% regimes in Italy / Greece / Portugal.</p><p><span class="catch">Catch:</span> worldwide-tax home countries claw it back; no US treaty in many.</p></div>
+    <div class="s5"><h3>🚜 Ag equipment</h3><p><span class="good">Best:</span> cheap secondhand in depopulating Japan / Italy / Spain; CAP grants help fund it.</p><p><span class="catch">Catch:</span> import duties & thin dealer networks in frontier markets.</p></div>
+    <div class="s5"><h3>💶 Subsidies</h3><p><span class="good">Best:</span> EU CAP young-farmer installation aid €50k+ (PT / IT / GR / ES).</p><p><span class="catch">Catch:</span> attach to individual registered farmers, not the "commune."</p></div>
+  </div>
+  <p class="lede" style="margin-top:12px">Depopulating Europe subsidizes the exact things S5 said you'd need — if you can get the visa.</p>
+  <aside class="notes">Rebuilt as icon cards with healthcare & pensions leading, per feedback — and every country's specific healthcare/pension text now shows on its globe data-card. Closes the S5 loop: the EU essentially pays young farmers to occupy its emptying countryside (installation grants, cheap equipment, universal healthcare, pensioner tax breaks) but gates it behind an immigration system that isn't built for groups.</aside>
+</section>
+
+<!-- CTA — interactive plan builder -->
+<section data-background-color="#14140f">
+  <p class="kicker">Session 6 · Choosing Ground</p>
+  <h2>Build your starting point</h2>
+  <div id="plan">
+    <div class="pick">
+      <span>My group is mostly</span>
+      <select id="plan-group">
+        <option value="ret">retirees on pensions/savings</option>
+        <option value="remote">remote workers</option>
+        <option value="fam">families &amp; a mix</option>
+        <option value="young">young &amp; cash-poor</option>
+      </select>
+      <span>and we care most about</span>
+      <select id="plan-prio">
+        <option value="own">owning the land outright</option>
+        <option value="cost">the cheapest total cost</option>
+        <option value="move">moving everyone easily</option>
+        <option value="qol">quality of life</option>
+      </select>
+    </div>
+    <div id="plan-out"></div>
+  </div>
+  <p class="lede" style="margin-top:14px">Cheap land is common. Land you can own, build on, move your people to, and hold as a commune — that's the needle. This deck is the magnet.</p>
+  <p class="sources" style="margin-top:14px">Data: a July 2026 synthesis of national tax/immigration/land-law sources (Global Citizen Solutions, PwC/KPMG tax summaries, Eurostat &amp; national ag-land indices, migration authorities, Numbeo, Global Peace Index) + course research. Decision-support, not legal advice — verify with a local attorney before acting.</p>
+  <aside class="notes">Interactive plan-builder per feedback (Session-7 reference removed). Have people set the two dropdowns for their real group and read the recommendation — it runs the same weighting engine as the globe questionnaire. Reiterate the honesty clause: opinionated synthesis, facts move, get a local lawyer.</aside>
+</section>
+
+<!-- HOMEWORK -->
+<section>
+  <p class="kicker">Before next session</p>
+  <h2>Homework</h2>
+  <div class="hw">
+    <ol>
+      <li><b>Run the questionnaire as your real group.</b> Set the six sliders to what your actual members would weight, and write down your top three countries.</li>
+      <li><b>Pin down the visa.</b> For each of your top two, find the <i>specific</i> visa you'd each use — its income/asset threshold, how long it takes, and the path to permanent residency. (Start from each country's globe card.)</li>
+      <li><b>Sketch the legal stack.</b> One line each: who <i>holds</i> the land (trust / foundation / CLT) and who <i>runs</i> the farm (co-op / company) — and whether foreigners can even own land there.</li>
+      <li><b>Find your dealbreaker.</b> Name the single thing most likely to sink your top pick — a foreign-ownership ban? a closing visa? water / climate? — and write the one question you'd take to a local lawyer.</li>
+      <li><b>Gut-check the trade.</b> In two sentences: which corner of the triangle is your group giving up, and is everyone actually OK with it?</li>
+    </ol>
+  </div>
+  <p class="tiny">Press <span class="mono">c</span>, then the bottom bar's <b>Copy all comments</b>, to export everything you jotted on these slides.</p>
+  <aside class="notes">Concrete homework that forces each person from "vibes" to a real shortlist with a real visa and a real legal structure — and to name the dealbreaker they must verify with a lawyer. Collect the copied comments next session.</aside>
+</section>
+
+</div></div>
+
+<!-- fixed UI -->
+<div id="zoom-controls"><button id="zoom-out">−</button><div class="zoom-level" id="zoom-level">100%</div><button id="zoom-in">+</button><button id="zoom-reset" title="reset" style="font-size:13px">⟳</button></div>
+<div id="comment-bar"><span class="lbl" id="cb-slide">slide</span><textarea id="cb-text" placeholder="Notes on this slide (saved in your browser)…"></textarea><button class="preset" id="cb-copy" style="margin:0">Copy all</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+/* ============ DATA — 50 jurisdictions (2026 synthesis) ============ */
+/* s = [LAND,VISA,TAX,LAW,LIFE,STAB] each 0-3 */
+const LENSES=["LAND","VISA","TAX","LAW","LIFE","STAB"];
+const DATA=[
+{c:"Italy",iso:"IT",r:"Europe",a:"depopulation",lat:42.8,lng:12.8,farm:16000,cost:1500,
+ land:"S. farmland €9–28k/ha (Molise/Basilicata cheapest); north €40k+",house:"€1 houses real but €150–400k all-in after renovation",
+ tax:"Income to 45%+; crypto 33% (2026); 7% flat pensioner tax expanded to towns ≤30k pop",zone:"Foreigners buy via reciprocity; ag build needs farmer (IAP) status, ~1ha min",
+ visa:"No group visa; Elective Residency (~€32k passive), Digital Nomad; citizenship 10y",law:"Cooperativa agricola / di comunità; satisfies farmer status collectively",
+ life:"High QoL, safe; south thin on services",health:"SSN universal; retirees pay ~€2k/yr",pension:"7% flat on foreign pension in qualifying southern towns",ag:"CAP young-farmer up to 60% + €15M/yr",stab:"Stable; debt 136%, rule-of-law slippage",
+ s:[2,1,2,2,3,2],v:"Cheap southern land + an active 7% pensioner tax that aligns with it — but every adult needs an individual visa."},
+{c:"Spain",iso:"ES",r:"Europe",a:"depopulation",lat:40.2,lng:-3.7,farm:4000,cost:1300,
+ land:"'España vaciada' marginal land €1–6k/ha; productive €8–22k/ha",house:"Griegos free plots (one family); buy an abandoned aldea directly",
+ tax:"Income to ~47%; regional wealth tax (Andalucía ~0); Beckham 24% flat via nomad visa",zone:"Foreigners CAN buy ag land; suelo rústico build ~1–2.5ha min; UMC anti-fragmentation",
+ visa:"Golden visa ENDED 2025; Non-Lucrative (€2,400/mo passive), Autónomo for farm co-op; citizenship 10y",law:"Cooperativa de explotación comunitaria de la tierra — purpose-built communal land co-op",
+ life:"High QoL, very safe; interior aging/thin",health:"SNS universal & strong",pension:"Non-Lucrative visa; pensions taxed as income",ag:"CAP subsidies; strong co-op tradition (Mondragón)",stab:"Stable EU democracy, strong rule of law",
+ s:[3,2,1,3,3,2],v:"Best-in-class communal-land-co-op law and dirt-cheap interior land; the tax bill and 10-year citizenship are the drawbacks."},
+{c:"Portugal",iso:"PT",r:"Europe",a:"depopulation",lat:39.5,lng:-8.0,farm:9700,cost:1400,
+ land:"Interior Alentejo/Beira farmland €7–11k/ha",house:"No cash scheme; 'Aldeias' are heritage-tourism restoration",
+ tax:"Income to 48%; crypto <1yr 28% else 0%; no wealth tax; 10% flat on foreign pensions survives",zone:"Foreigners no restriction; RAN protects best soils (no-build)",
+ visa:"Golden-visa RE route ended 2023 (fund/10-job remain); D7 passive, D2 entrepreneur; CITIZENSHIP now 10y (was 5)",law:"Cooperativa (DL 335/99) coop-friendly; association; foundation",
+ life:"#7 Global Peace Index; interior underdeveloped",health:"SNS universal, co-pays gone; 1.56M lack family doctor",pension:"D7 + 10% flat on foreign pension (10y)",ag:"CAP PEPAC young-farmer up to €50–55k",stab:"Improving credit; fragile minority govt",
+ s:[3,2,2,2,3,2],v:"Cheap land, no foreign-ownership bar, surviving 10% pension regime — but the famous 5-year citizenship is now 10 and water is a risk."},
+{c:"Greece",iso:"GR",r:"Europe",a:"depopulation",lat:39.0,lng:22.0,farm:10800,cost:1200,
+ land:"Farmland ~€13.5k/ha; Western Greece ~€6.3k; islands far higher",house:"Antikythera free house+€500/mo (needs 4+ kids); no €1 scheme",
+ tax:"Income 9–44%; property CGT 0% until end-2026; no wealth tax; 7% flat pensioner tax (15y)",zone:"Non-EU farmland ownership AMBIGUOUS (border limits); build min 4,000 m²+road, tightening",
+ visa:"No group visa; FIP (€3,500/mo passive), Digital Nomad; PR 5y, citizenship 7y+B1",law:"Cooperative, civil non-profit company, association, foundation",
+ life:"#1 retirement destination 2026; easy to settle",health:"ESY universal, 6.6 docs/1k; island gap",pension:"7% flat on all foreign income (15y)",ag:"CAP €13.4B; periodic young-farmer grants",stab:"'Grecovery', debt 209%→<140%",
+ s:[2,2,2,2,3,2],v:"Cheap mainland land, generous 7% pensioner regime, top retirement QoL — undercut by legal doubt over non-EU farmland ownership."},
+{c:"France",iso:"FR",r:"Europe",a:"depopulation",lat:46.6,lng:2.2,farm:6300,cost:1600,
+ land:"'Diagonale du vide' rural land cheap (~€6k/ha); SAFER can pre-empt sales",house:"Some €1 village-house schemes (e.g. small communes); rare",
+ tax:"Income to 45%; wealth tax on property (IFI); social charges heavy",zone:"Foreigners buy freely; SAFER regulates ag sales; strong planning control",
+ visa:"Long-stay visitor (VLS-TS), talent passport; citizenship 5y",law:"SCI, association loi 1901, SCOP/agricultural coop, GFA farmland groups",
+ life:"Very high QoL, healthcare superb",health:"Excellent universal; low cost",pension:"Visitor visa; pensions taxed; US treaty favorable",ag:"CAP young-farmer aid; dense co-op sector",stab:"Very stable, strong rule of law",
+ s:[2,1,1,2,3,3],v:"Vast cheap emptying countryside and elite healthcare, but high tax and a SAFER gatekeeper on farmland sales."},
+{c:"Germany",iso:"DE",r:"Europe",a:"depopulation",lat:51.2,lng:10.4,farm:26000,cost:1700,
+ land:"East-German depopulation, but farmland pricey (~€26k/ha) & strict",house:"Rare cheap-village stock in the east; no formal program",
+ tax:"Income to 45%; no wealth tax; crypto 0% after 1yr hold",zone:"Foreigners buy freely; strict building code; farmland transfer regulated",
+ visa:"Freelancer/self-employ, skilled-worker; citizenship now 5y",law:"Genossenschaft (very strong co-op law), eingetragener Verein, Stiftung",
+ life:"High QoL, strong services",health:"Universal statutory insurance; excellent",pension:"No retiree visa; pensions taxed",ag:"CAP subsidies; deep co-op tradition",stab:"Very stable, strong institutions",
+ s:[1,1,1,2,3,3],v:"Gold-standard co-op law and stability, but land is expensive, building is strict, and there's no easy passive-income visa."},
+{c:"Finland",iso:"FI",r:"Europe",a:"depopulation",lat:64.0,lng:26.0,farm:8000,cost:1500,
+ land:"Cheap boreal land & forest in the north/east; foreigners can buy",house:"Abandoned rural houses cheap; no formal scheme",
+ tax:"Income to ~55% incl. municipal; capital 30–34%",zone:"Foreigners buy freely (non-EU may need permit); vast buildable forest",
+ visa:"Self-employ/startup, remote-work; citizenship 5y",law:"Osuuskunta (co-op), yhdistys (association), säätiö (foundation)",
+ life:"Top of world happiness rankings; safe",health:"Universal; excellent",pension:"No retiree visa; pensions taxed",ag:"CAP + national northern-aid subsidies",stab:"Very stable, top rule of law; NATO",
+ s:[2,1,1,2,3,3],v:"Cheap forest land, elite institutions and the world's happiest society — priced in high tax and a hard winter and visa."},
+{c:"Croatia",iso:"HR",r:"Europe",a:"depopulation",lat:45.1,lng:15.5,farm:4900,cost:1600,
+ land:"Arable €4,491/ha — cheapest in EU; Slavonia interior below coast",house:"No €1 scheme; 2025 demographic fund targets 600k empty homes",
+ tax:"Income eff 15–33%; cap gains/crypto 12% (0 after 2y); new 2025 property tax",zone:"Non-EU individuals BARRED from farmland (company workaround); residence build ~20ha",
+ visa:"Digital nomad does NOT lead to PR; company+51%-owner self-employ permit; PR 5y",law:"Zadruga (co-op), udruga, zaklada; no native CLT",
+ life:"High QoL coast; interior aging",health:"HZZO public, ~€1k first-year buy-in",pension:"No retiree visa; pensions taxed; no US treaty",ag:"CAP subsidies (underused); OPG small-farm vehicle",stab:"EU/Eurozone/Schengen/NATO; CPI 47",
+ s:[2,1,1,1,2,2],v:"Cheapest EU farmland and real stability, but non-EU individuals are barred from owning farmland and no visa leads cleanly to group residency."},
+{c:"Bulgaria",iso:"BG",r:"Europe",a:"low-tax-digital",lat:42.7,lng:25.5,farm:6000,cost:900,
+ land:"Cheap village houses & land; among the lowest in the EU",house:"Abandoned villages; houses from a few €k",
+ tax:"10% flat income — lowest in EU; 10% corporate; crypto as income",zone:"Non-EU need a company to own land; EU citizens buy freely",
+ visa:"Long-stay/retirement (D visa) via income; PR 5y",law:"Kooperatsiya (co-op), sdruzhenie (association), fondatsiya",
+ life:"Cheap; QoL modest, aging population",health:"Public + affordable private",pension:"Retirement D-visa on pension income",ag:"CAP subsidies; large farm sector",stab:"EU/NATO; corruption concerns, Eurozone 2025",
+ s:[2,2,3,2,2,2],v:"The EU's cheapest land and a flat 10% tax; non-EU buyers just need a company and can tolerate modest QoL."},
+{c:"Romania",iso:"RO",r:"Europe",a:"depopulation",lat:45.9,lng:24.6,farm:7000,cost:900,
+ land:"Cheap Carpathian & Transylvanian land; rural depopulation",house:"Abandoned village houses very cheap; no formal scheme",
+ tax:"10% flat income (reforms pending); low property tax",zone:"Non-EU need company/EU-resident status for farmland; can build rurally",
+ visa:"Long-stay via income/business; PR 5y; EU",law:"Cooperativă agricolă, asociație, fundație",
+ life:"Cheap; strong rural traditions; services thin",health:"Public + cheap private",pension:"Pensions taxed; no dedicated retiree visa",ag:"CAP subsidies; big agrarian base",stab:"EU/NATO; improving, some volatility",
+ s:[2,2,2,2,2,2],v:"Cheap Carpathian land, low flat tax and deep agrarian roots — a workable value play inside the EU."},
+{c:"Latvia",iso:"LV",r:"Europe",a:"depopulation",lat:56.9,lng:24.6,farm:4500,cost:1000,
+ land:"Fastest-depopulating EU state; cheap farmland & forest",house:"Cheap rural houses; no formal repopulation scheme",
+ tax:"Progressive to ~31%; low corporate on retained profit",zone:"EU buy freely; non-EU farmland needs approval; buildable countryside",
+ visa:"Business/self-employ; PR 5y; EU",law:"Kooperatīvs, biedrība (association), nodibinājums (foundation)",
+ life:"Decent QoL; empty countryside",health:"Public + private; improving",pension:"Pensions taxed; EU access",ag:"CAP subsidies; forestry income",stab:"EU/NATO; Russia-border risk",
+ s:[2,2,2,2,3,2],v:"Europe's emptiest countryside at low prices — the shadow over it is the Russian border two hours east."},
+{c:"Estonia",iso:"EE",r:"Europe",a:"low-tax-digital",lat:58.6,lng:25.0,farm:4300,cost:1100,
+ land:"Cheap land & forest; digital-first state",house:"Cheap rural stock; no scheme",
+ tax:"0% on retained corporate profit; 20% flat personal; e-Residency",zone:"EU buy freely; non-EU farmland restricted; buildable forest",
+ visa:"Digital-nomad & startup visas; e-Residency (business, not residency); PR 5y",law:"Tulundusühistu (co-op), MTÜ (non-profit), sihtasutus (foundation)",
+ life:"High QoL, digital services; cold",health:"Universal; solid",pension:"Pensions taxed; EU access",ag:"CAP subsidies",stab:"EU/NATO; Russia-border risk",
+ s:[1,2,3,2,3,2],v:"The digital state — e-Residency, 0% retained-profit tax — best for a remote-income group that leases rather than farms."},
+{c:"Serbia",iso:"RS",r:"Europe",a:"low-tax-digital",lat:44.0,lng:21.0,farm:5000,cost:800,
+ land:"Cheap fertile land (Vojvodina); non-EU flexible",house:"Abandoned village houses very cheap",
+ tax:"10–15% flat-ish; favorable for freelancers/entrepreneurs",zone:"Foreigners buy via reciprocity/company; can build rurally",
+ visa:"Easy 1-yr residence via property/business; citizenship path; non-EU flexible",law:"Zadruga (strong co-op tradition), udruženje, fondacija",
+ life:"Cheap, lively; QoL modest",health:"Public + cheap private",pension:"Pensions lightly taxed; residence easy",ag:"Subsidies; big agrarian sector",stab:"EU candidate; stable-ish, some volatility",
+ s:[3,2,2,2,2,2],v:"Cheap fertile land, an easy non-EU residence, and a real co-op tradition — a quietly strong all-rounder outside the EU."},
+{c:"Albania",iso:"AL",r:"Europe",a:"low-tax-digital",lat:41.0,lng:20.0,farm:3000,cost:800,
+ land:"Dirt-cheap land & houses; foreigners can buy (ag land limits)",house:"Abandoned houses from a few €k",
+ tax:"Flat/low income; simplified small-business tax",zone:"Foreigners can own buildings/land (ag land via lease/company); loose enforcement",
+ visa:"US/many nationals 1-year visa-free; easy residence; citizenship 5y",law:"Cooperative, shoqatë (association), fondacion",
+ life:"Cheap, warm, coastal; developing services",health:"Public weak; cheap private",pension:"Residence easy; pensions light",ag:"Subsidies growing; big rural sector",stab:"EU candidate; institutions weak",
+ s:[3,3,2,1,2,2],v:"Dirt-cheap Mediterranean land and a full year visa-free for Americans — the catch is weak institutions and thin law."},
+{c:"Georgia",iso:"GE",r:"Eurasia",a:"low-tax-digital",lat:42.0,lng:43.5,farm:3500,cost:800,
+ land:"Cheap land (Kakheti wine country); but foreigners restricted from ag land",house:"Cheap village houses; no formal scheme",
+ tax:"Territorial — foreign income untaxed; 1% small-business; 5% dividends",zone:"Foreigners BARRED from agricultural land (2017 moratorium); company workaround; non-ag OK",
+ visa:"1-year VISA-FREE for ~95 nationalities; residence via property/business; PR 5y",law:"Kooperativi, association, foundation; land co-op mechanism exists",
+ life:"Cheap, hospitable; rural healthcare poor",health:"UHC partial; foreigners need private (~$20/mo)",pension:"Foreign pensions untaxed; no retiree visa needed (visa-free)",ag:"Subsidies modest; wine/hazelnut co-ops",stab:"Political crisis 2024–26, EU path frozen, protests",
+ s:[2,3,3,2,2,2],v:"The cheapest, easiest entry on Earth — 1-year visa-free, zero foreign-income tax — but you lease, don't own, and politics is turbulent."},
+{c:"Armenia",iso:"AM",r:"Eurasia",a:"low-tax-digital",lat:40.2,lng:45.0,farm:3000,cost:800,
+ land:"Cheap highland farmland; foreigners can own (not agricultural via lease)",house:"Cheap village houses in emptying regions",
+ tax:"Territorial-leaning; ~20% flat income; low small-biz",zone:"Foreigners can't own land directly (company/lease); can hold buildings",
+ visa:"Easy residence, 180-day visa-free (US); fast track",law:"Cooperative, hasarakakan kazmakerputyun (NGO), foundation",
+ life:"Cheap, safe, warm hosts; developing",health:"Public weak; cheap private",pension:"Easy residence; pensions light",ag:"Subsidies; strong agrarian culture",stab:"Azerbaijan conflict risk is real",
+ s:[2,3,3,2,2,1],v:"Cheap, easy and low-tax with warm hospitality — shadowed by an unresolved war on its border."},
+{c:"Kazakhstan",iso:"KZ",r:"Eurasia",a:"frontier-land",lat:48.0,lng:68.0,farm:800,cost:800,
+ land:"Vast cheap steppe farmland; but foreigners BARRED from owning ag land",house:"No scheme; cheap rural housing",
+ tax:"10% flat income; territorial elements",zone:"Foreigners cannot own agricultural land (moratorium); lease only",
+ visa:"Investor/work routes; harder for a group; some visa-free entry",law:"Cooperative, associations; state-heavy",
+ life:"Cheap; harsh continental climate; modest services",health:"Public weak; private in cities",pension:"No retiree visa; pensions light",ag:"State ag support; grain economy",stab:"Stable but authoritarian; 2022 unrest",
+ s:[1,1,2,1,1,2],v:"Endless cheap steppe you can farm but not own, under an authoritarian state and a brutal climate — a hard pass for most."},
+{c:"Turkey",iso:"TR",r:"MENA",a:"frontier-land",lat:39.0,lng:35.0,farm:5000,cost:900,
+ land:"Cheap Anatolian farmland; foreigners can buy (some military-zone limits)",house:"Abandoned village houses cheap",
+ tax:"Income to 40%; high inflation erodes real terms; crypto largely untaxed",zone:"Foreigners buy land (reciprocity/limits); can build; ag viable",
+ visa:"Residence via property; citizenship by $400k investment; renewals tightening",law:"Kooperatif (strong tradition), dernek (association), vakıf (foundation)",
+ life:"Rich culture, warm climate; lira volatility",health:"Universal SGK + cheap private; good",pension:"Residence via property/income",ag:"Subsidies; huge agrarian sector",stab:"Inflation & political volatility",
+ s:[3,2,1,2,2,1],v:"Cheap fertile land, a strong co-op tradition and cheap healthcare — bought with currency chaos and political risk."},
+{c:"Cyprus",iso:"CY",r:"MENA",a:"qol-premium",lat:35.0,lng:33.0,farm:20000,cost:1500,
+ land:"Land pricey; small island; Mediterranean climate",house:"No cheap scheme",
+ tax:"2026 reform: income 0% to €22k then 20–35%; non-dom 0% on dividends/interest; crypto 8% flat",zone:"Foreigners buy (non-EU acquisition permit); limited land",
+ visa:"Non-dom residence, digital nomad; 60-day tax residency; PR routes",law:"Cooperative, swmateio (association), idryma (foundation)",
+ life:"High QoL, sun, safe; EU",health:"GESY universal since 2019",pension:"5% flat option on foreign pension; non-dom shelter",pension2:"",ag:"CAP subsidies; small sector",stab:"EU; island divided but stable south",
+ s:[1,2,3,2,3,2],v:"A sunny EU tax haven — non-dom 0% on investment income — but land is scarce and dear, so it's a base, not a farm."},
+{c:"Morocco",iso:"MA",r:"Africa",a:"frontier-land",lat:32.0,lng:-6.0,farm:6000,cost:800,
+ land:"Cheap land near Europe; but agricultural land largely reserved for Moroccans",house:"Cheap rural houses; no scheme",
+ tax:"Income to 38%; territorial elements; incentives for ag",zone:"Foreigners can own urban land; AGRICULTURAL land restricted (vocation agricole)",
+ visa:"Residence via income/property; renewable; relatively open",law:"Coopérative (strong, e.g. argan), association, fondation",
+ life:"Warm, cheap, close to EU; developing",health:"Public weak; cheap private",pension:"Residence via income; pensions light",ag:"Green Morocco Plan subsidies; big co-op sector",stab:"Stable monarchy; regional outlier",
+ s:[2,2,2,1,2,2],v:"Cheap, warm and an hour from Europe with a famous co-op sector — but foreigners are largely locked out of farmland itself."},
+{c:"Japan",iso:"JP",r:"Asia",a:"depopulation",lat:36.5,lng:138.0,farm:15000,cost:1200,
+ land:"Akiya (empty houses) $0–30k; 9M vacant homes; farmland cheap but ag-committee gated",house:"Akiya banks nationwide; near-free rural houses",
+ tax:"Income to 55%; crypto taxed as income up to 55%; no wealth tax",zone:"Foreigners CAN own land incl. farmland (with local ag-committee approval)",
+ visa:"No easy group route; business-manager, specified-skilled-worker (agriculture→PR in ~10y); hard",law:"Ippan shadan hojin, NPO, agricultural production corporation; co-op law",
+ life:"Top QoL, ultra-safe, superb food",health:"Universal NHI; excellent, cheap",pension:"No retiree visa; foreign pensions taxed",ag:"JA co-ops dominate; cheap secondhand equipment",stab:"Very stable; 'nuclear shield'",
+ s:[3,1,1,2,3,3],v:"The world's cheapest developed-country land in a top-QoL society — and the hardest wall is simply getting the group a visa."},
+{c:"South Korea",iso:"KR",r:"Asia",a:"depopulation",lat:36.5,lng:127.8,farm:20000,cost:1300,
+ land:"Rural depopulation; countryside land cheap-ish; foreigners can own",house:"Empty rural houses (bin-jip); local return-to-farm programs (citizens)",
+ tax:"Income to 45%; crypto tax deferred; property taxes",zone:"Foreigners can own land incl. farmland (with farming plan); building OK",
+ visa:"Hard for groups; F-2/F-5 points, D-8 business; long road",law:"Cooperative (nonghyup), incorporated association, foundation",
+ life:"High QoL, very safe, fast services",health:"Universal NHI; excellent",pension:"No retiree visa; pensions taxed",ag:"Strong ag co-ops; return-farmer subsidies (citizens)",stab:"Stable; regional tension",
+ s:[2,1,1,2,3,3],v:"Emptying countryside where foreigners can actually own farmland — gated by one of Asia's tougher immigration systems."},
+{c:"Thailand",iso:"TH",r:"Asia",a:"qol-premium",lat:15.0,lng:101.0,farm:8000,cost:900,
+ land:"Cheap rural land — but foreigners CANNOT own land",house:"Cheap rural stock; foreigners lease only",
+ tax:"Income to 35%; new foreign-income rules; territorial-ish",zone:"Foreigners barred from land ownership; 30-yr leases or Thai company",
+ visa:"LTR (10-yr) & Elite visas easy; retirement visa (age 50+); cheap living",law:"Cooperative (Thai), foundation; land held via lease/company",
+ life:"Warm, cheap, good food; friendly",health:"Excellent cheap private; medical-tourism hub",pension:"Retirement visa easy; pensions light",ag:"Ag co-ops; rice economy",stab:"Stable-ish; periodic coups",
+ s:[1,2,2,1,2,2],v:"Easy visas, cheap living and world-class cheap healthcare — but foreigners can't own the land, so it's a lease, not a homestead."},
+{c:"Malaysia",iso:"MY",r:"Asia",a:"qol-premium",lat:4.2,lng:102.0,farm:10000,cost:1000,
+ land:"Foreigners can own land above a price threshold; ag land restricted",house:"No scheme; leaseholds common",
+ tax:"Income to 30%; territorial (foreign income largely untaxed); no CGT",zone:"Foreigners buy above min price; agricultural land state-restricted",
+ visa:"MM2H (long-stay) tightened but viable; work/business routes",law:"Koperasi (strong), society, foundation",
+ life:"High QoL, warm, English widely used",health:"Excellent cheap private; medical tourism",pension:"MM2H functions as retirement route",ag:"Ag co-ops; palm/rubber economy",stab:"Stable; multi-ethnic democracy",
+ s:[1,2,2,1,3,2],v:"Territorial tax, great cheap healthcare and English fluency make it a comfortable base — but ag land is largely off-limits."},
+{c:"Indonesia",iso:"ID",r:"Asia",a:"qol-premium",lat:-2.5,lng:118.0,farm:9000,cost:900,
+ land:"Cheap land (Bali/Java) — but foreigners CANNOT hold freehold (Hak Milik)",house:"Leaseholds & Hak Pakai; no freehold for foreigners",
+ tax:"Income to 35%; territorial for new residents (5y); crypto taxed",zone:"Foreigners barred from freehold; right-to-use / company (PMA) only",
+ visa:"KITAS, second-home & remote-worker visas; Bali hub",law:"Koperasi, yayasan (foundation); land via PMA company",
+ life:"Warm, cheap, vibrant; Bali expat scene",health:"Private OK in cities; rural weak",pension:"Retirement KITAS (age 55+)",ag:"Co-ops; huge smallholder base",stab:"Stable democracy; seismic risk",
+ s:[1,2,2,1,2,2],v:"Cheap and beautiful with easy long-stay visas — but no freehold for foreigners makes secure communal title a legal maze."},
+{c:"Philippines",iso:"PH",r:"Asia",a:"qol-premium",lat:12.9,lng:121.8,farm:7000,cost:800,
+ land:"Cheap rural land — but foreigners CANNOT own land",house:"Cheap stock; foreigners lease or via 60/40 corp",
+ tax:"Income to 35%; territorial for foreigners on foreign income",zone:"Foreigners barred from land; long lease or majority-Filipino corp",
+ visa:"SRRV retirement visa easy & cheap; PR-like",law:"Cooperative (strong), foundation; land via corp/lease",
+ life:"Warm, English-speaking, friendly",health:"Cheap private in cities; rural weak",pension:"SRRV — one of the easiest retirement visas",ag:"Ag co-ops; smallholder economy",stab:"Democracy; typhoon & security risk",
+ s:[1,2,2,1,2,1],v:"One of the easiest retirement visas anywhere and English everywhere — but no foreign land ownership and real typhoon exposure."},
+{c:"Vietnam",iso:"VN",r:"Asia",a:"frontier-land",lat:16.0,lng:106.0,farm:8000,cost:800,
+ land:"Cheap — but ALL land is state-owned; only use-rights exist, none for foreigners in farmland",house:"No foreign farmland route",
+ tax:"Income to 35%; territorial-ish for foreigners",zone:"No private land ownership; foreigners can't hold ag land-use rights",
+ visa:"Business/investor & work visas; no easy group route",law:"Cooperative (HTX), association; land-use rights state-granted",
+ life:"Cheap, dynamic, good food",health:"Cheap private in cities; rural basic",pension:"No retiree visa",ag:"HTX co-ops; huge rice/coffee sector",stab:"Stable one-party state",
+ s:[1,1,2,1,2,2],v:"Dynamic and cheap, but all land is state-held and closed to foreign farmers — structurally impossible for a land-owning commune."},
+{c:"Nepal",iso:"NP",r:"Asia",a:"contrast",lat:28.3,lng:84.0,farm:9000,cost:700,
+ land:"Cheap Himalayan land — but foreigners effectively CANNOT own land",house:"Return-to-village grants exist (citizens only)",
+ tax:"Income to 36% (2025); crypto ILLEGAL, not just untaxed",zone:"Near-total ban on foreign land ownership; 50-yr business lease only",
+ visa:"Residential visa ($20k+income) / business; no group route; citizenship 15y",law:"Cooperative (Nepali-majority), NGO; land title barred to foreigners",
+ life:"Cheap, spiritual draw; Kathmandu pollution",health:"Rural severely underdeveloped; evacuation risk",pension:"Residential visa on income",ag:"Big subsidies (misuse concerns); co-op culture",stab:"Sept-2025 uprising, interim govt, 2026 election",
+ s:[1,1,1,1,1,1],v:"Cheap and magnetic, but foreigners can't own land, crypto is illegal, and the country just went through a violent transition — a red light."},
+{c:"India",iso:"IN",r:"Asia",a:"contrast",lat:22.0,lng:79.0,farm:9000,cost:700,
+ land:"Cheap farmland — but foreigners & OCIs CANNOT buy agricultural land",house:"No foreign farmland route",
+ tax:"Income to 30%+; crypto taxed 30%; complex",zone:"Foreigners/OCI barred from agricultural land; states vary",
+ visa:"No easy long-stay/retirement; business/employment; hard for groups",law:"Cooperative societies (huge), trust, society; land barred to foreigners",
+ life:"Cheap, rich culture; pollution & infra gaps",health:"Cheap private; variable public",pension:"No retiree visa",ag:"Vast subsidies & co-ops (citizens)",stab:"Stable democracy; big, uneven",
+ s:[1,1,1,1,2,2],v:"A deep co-op tradition and cheap land, both firmly closed to foreigners — instructive as a contrast, unworkable as a destination."},
+{c:"Sri Lanka",iso:"LK",r:"Asia",a:"frontier-land",lat:7.9,lng:80.7,farm:8000,cost:800,
+ land:"Cheap interior land — foreigners can't own freehold; 99-yr lease only",house:"No foreign-facing scheme",
+ tax:"Income to 36%; CGT 15%; crypto taxed; recovering economy",zone:"No foreign freehold (2014 Act); 99-yr lease or 49% company",
+ visa:"New Digital Nomad visa (2026, $2k/mo); retirement 'My Dream Home' (55+)",law:"Cooperative Societies Law (proportional land shares); NGO/CLG",
+ life:"Tropical, tourist infra; post-2022 recovery",health:"Free public + cheap good private",pension:"'My Dream Home' retiree visa (55+)",ag:"Fertilizer subsidies; co-op land mechanism",stab:"Recovering from 2022 default; cyclone risk",
+ s:[1,2,1,2,2,1],v:"A brand-new nomad visa and a useful co-op land-share law — held back by a 99-year-lease ceiling and a fragile post-default economy."},
+{c:"Mexico",iso:"MX",r:"Latin America",a:"easy-residency",lat:23.6,lng:-102.5,farm:6000,cost:1000,
+ land:"Cheap rural land; foreigners own directly (except coast/border → fideicomiso trust)",house:"Cheap rural stock; no formal scheme",
+ tax:"Income to 35%; territorial elements; low property tax",zone:"Foreigners own land (restricted zone via bank trust); ejido land communal but citizen-only",
+ visa:"Temporal/permanente residency via income/savings — straightforward",law:"Sociedad cooperativa, asociación civil, fideicomiso; ejido (citizens)",
+ life:"Warm, rich culture, cheap; regional safety varies",health:"Cheap private; IMSS public",pension:"Residency via passive income — easy",ag:"Co-ops; ejido communal tradition",stab:"Stable federal; cartel/security patches",
+ s:[2,3,2,2,2,1],v:"Easy residency, direct foreign land ownership and cheap living — the variable is regional security, not the paperwork."},
+{c:"Costa Rica",iso:"CR",r:"Latin America",a:"qol-premium",lat:9.7,lng:-83.8,farm:11000,cost:1300,
+ land:"Land not cheap but foreigners own freely; rich soils, biodiversity",house:"No cheap scheme; strong eco-community scene",
+ tax:"Territorial — foreign income untaxed; income to 25%",zone:"Foreigners own land freely incl. farmland; build with permits",
+ visa:"Rentista ($2,500/mo) & pensionado ($1k pension) — easy",law:"Cooperativa (strong), asociación, fundación",
+ life:"Top QoL, 'pura vida', very safe, biodiverse",health:"CAJA universal + good private",pension:"Pensionado visa — a global benchmark",ag:"Co-ops; strong organic/eco sector",stab:"Oldest stable democracy in region, no army",
+ s:[2,3,2,2,3,3],v:"Buy the quality of life: safe, stable, territorial-tax and easy residency — you just pay more for the land itself."},
+{c:"Panama",iso:"PA",r:"Latin America",a:"easy-residency",lat:8.5,lng:-80.0,farm:7000,cost:1100,
+ land:"Cheap highland (Chiriquí) land; foreigners own freely",house:"No scheme; reforestation-visa land options",
+ tax:"Territorial — foreign income 0%; dollarized",zone:"Foreigners own land freely (except some border/island); build OK",
+ visa:"Friendly Nations & investor visas; Rentista Retirado ($850/mo)",law:"Cooperativa, asociación, fundación de interés privado (strong)",
+ life:"Warm, dollarized, good infra; hub",health:"Good private; cheap",pension:"Pensionado one of the world's best",ag:"Co-ops; coffee highlands",stab:"Stable, dollarized; hub economy",
+ s:[2,3,3,2,2,2],v:"Dollarized, territorial-tax and famously easy to move to — cool highland land you can own outright makes it a genuine contender."},
+{c:"Ecuador",iso:"EC",r:"Latin America",a:"easy-residency",lat:-1.5,lng:-78.5,farm:6000,cost:800,
+ land:"Cheap Andean & coastal land; foreigners own freely; dollarized",house:"Cheap rural stock; expat farm communities",
+ tax:"Income to 35%; territorial-leaning; dollarized",zone:"Foreigners own land freely incl. farmland",
+ visa:"Low-threshold residency (pension/investment); PR fast",law:"Cooperativa (strong social-economy law), asociación, fundación",
+ life:"Cheap, diverse climates; safety declined recently",health:"IESS public + cheap private",pension:"Pensioner visa (~$1,400/mo)",ag:"Strong social-economy co-op sector",stab:"Dollarized; rising crime/security risk",
+ s:[3,3,2,2,2,1],v:"Cheap land you own outright, dollarized, with a strong social-economy co-op law — clouded lately by a real rise in insecurity."},
+{c:"Colombia",iso:"CO",r:"Latin America",a:"easy-residency",lat:4.6,lng:-74.3,farm:5000,cost:900,
+ land:"Cheap coffee-belt & llanos land; foreigners own freely",house:"Cheap rural stock",
+ tax:"Income to 39%; worldwide for residents (after 5y); property low",zone:"Foreigners own land freely; build with permits",
+ visa:"Migrant (M) & resident (R) visas via income/investment",law:"Cooperativa, asociación, fundación",
+ life:"Cheap, diverse climates, warm culture; safety varies",health:"EPS universal + good private",pension:"Pensioner (M) visa on pension income",ag:"Co-ops; coffee-federation model",stab:"Stabilizing; regional security patches",
+ s:[3,2,2,2,2,1],v:"Cheap coffee-country land, easy ownership and warm culture — with regional security the main thing to diligence."},
+{c:"Guatemala",iso:"GT",r:"Latin America",a:"frontier-land",lat:15.7,lng:-90.2,farm:5000,cost:800,
+ land:"Very cheap highland land (Lake Atitlán intentional-community scene); foreigners own freely",house:"Cheap rural stock",
+ tax:"Territorial — foreign income untaxed; income to 7% (flat-ish)",zone:"Foreigners own land freely incl. farmland",
+ visa:"Rentista/pensionado residency; moderate bureaucracy",law:"Cooperativa, asociación, fundación",
+ life:"Cheap, eternal-spring highlands; safety & services uneven",health:"Cheap private; public weak",pension:"Rentista/pensionado visa",ag:"Co-ops; coffee & maize",stab:"Weak institutions; crime concerns",
+ s:[3,2,2,2,1,1],v:"Dirt-cheap eternal-spring land and a living expat-commune scene at Atitlán — priced in weak institutions and uneven safety."},
+{c:"Uruguay",iso:"UY",r:"Latin America",a:"easy-residency",lat:-32.8,lng:-56.0,farm:4200,cost:1300,
+ land:"Cheap grazing/farmland by global standards; foreigners own FREELY",house:"No cheap scheme; agrarian economy",
+ tax:"Territorial; ~11-year tax holiday on foreign income; low property",zone:"Foreigners own land freely incl. farmland — no restrictions",
+ visa:"Straightforward residency via income; clear path to citizenship",law:"Cooperativa (very strong — housing co-ops famous), asociación, fundación",
+ life:"Safest, most stable in region; temperate",health:"Universal + good private",pension:"Residency via pension; foreign income holiday",ag:"Strong co-ops; cattle/soy economy",stab:"'Switzerland of South America' — top rule of law",
+ s:[2,3,2,2,3,3],v:"The region's stable, high-QoL bet: own farmland freely, an 11-year foreign-income holiday, and famous housing co-ops."},
+{c:"Paraguay",iso:"PY",r:"Latin America",a:"frontier-land",lat:-23.4,lng:-58.4,farm:1500,cost:700,
+ land:"Cheapest farmland in the Americas (Chaco $50–600/ha); foreigners own freely",house:"Cheap chácara land; build from $300/m²",
+ tax:"Territorial — 0% on foreign income/pension/crypto; 10% flat local",zone:"Foreigners own rural land freely (except 50km border strip)",
+ visa:"Easiest in the world — no income proof, ~$350–1,400; PR 2y, citizenship 3y",law:"Ley de Cooperativas 438/94; LIVING MENNONITE CO-OP precedent (1.8M ha)",
+ life:"Cheap, quiet; modest amenities",health:"Free public (IPS) + cheap private",pension:"~$1,500/mo passive for residency; pensions 0%",ag:"Huge soy/cattle co-ops; Mennonite model proven",stab:"Democratic but weak institutions, CPI 24/100",
+ s:[3,3,3,3,2,1],v:"The strongest fit for the course's exact ask: cheapest land, easiest group residency, and a living Mennonite co-op precedent — if you accept weak institutions."},
+{c:"Argentina",iso:"AR",r:"Latin America",a:"frontier-land",lat:-38.4,lng:-63.6,farm:5000,cost:800,
+ land:"Cheap Pampas farmland post-devaluation; foreigners own (rural-land caps)",house:"Cheap rural stock",
+ tax:"Income to 35%; high inflation; worldwide for residents",zone:"Foreigners own land (Rural Land Law caps % & near-border); build OK",
+ visa:"Rentista & investor residency; path to citizenship ~2y",law:"Cooperativa (very strong), asociación, fundación",
+ life:"European feel, great food; macro volatility",health:"Universal public + good private",pension:"Rentista visa; inflation erodes",ag:"Deep co-op tradition; agri-powerhouse",stab:"Chronic macro instability; reform underway",
+ s:[3,2,1,2,2,1],v:"World-class cheap farmland and a deep co-op culture — the eternal catch is Argentine macro-economic chaos."},
+{c:"Chile",iso:"CL",r:"Latin America",a:"qol-premium",lat:-35.7,lng:-71.5,farm:12000,cost:1400,
+ land:"Farmland $9–17k/ha — not cheap; foreigners own freely",house:"No cheap scheme",
+ tax:"Income to 40%; wealth tax proposed (2026); worldwide after 3y",zone:"Foreigners own land freely (near-border limits); build OK",
+ visa:"Investor/rentista; 2026 govt hardened on immigration",law:"Cooperativa (DFL 5/2004) but weak communal-title practice",
+ life:"Highest QoL & stability in region; diverse climate",health:"Good public + private",pension:"Rentista visa; pensions taxed",ag:"Co-ops modest; strong agribusiness",stab:"Most stable in South America; strong institutions",
+ s:[1,1,1,1,3,2],v:"The region's most developed, stable and livable — but land is dear, tax is real, and it scores weak on the exact communal-land ask."},
+{c:"Brazil",iso:"BR",r:"Latin America",a:"frontier-land",lat:-10.0,lng:-53.0,farm:6000,cost:1000,
+ land:"Frontier land cheap (Matopiba ~$5–7k/ha); South dearer",house:"No formal repopulation scheme",
+ tax:"Income to 27.5%; crypto 17.5%; worldwide for residents; no US treaty",zone:"Foreigners capped ~25% of municipal rural land; barred within 150km border; INCRA approval",
+ visa:"VIPER rentista ($2k/mo) or investor; no group route; PR 4y",law:"Associação/cooperativa can hold land; MST & quilombola precedents (nationals only)",
+ life:"Warm culture, great food; crime & infra vary sharply",health:"SUS universal (variable) + private",pension:"VIPER retiree visa ($2k/mo)",ag:"Pronaf smallholder credit; strong co-ops (nationals)",stab:"Established democracy; polarized, 2026 election",
+ s:[1,1,1,1,2,2],v:"Vast cheap frontier land, but foreign-ownership law structurally blocks a group from legally holding farmland together."},
+{c:"Bolivia",iso:"BO",r:"Latin America",a:"frontier-land",lat:-16.3,lng:-63.6,farm:1500,cost:700,
+ land:"Cheapest land in region (Santa Cruz $700–2,500/ha); foreigners barred direct",house:"No scheme; Mennonite colonies (~99)",
+ tax:"13% flat, territorial (foreign income untaxed); no individual CGT",zone:"Foreigners barred from direct rural land (Art.46) — Bolivian company only; 50km border barred",
+ visa:"'Specific Purpose Visa' (~$300/mo); PR 2y, citizenship 3y; bureaucratic amid crisis",law:"Social-cooperative form recognized; Mennonite colonies farm communally via company",
+ life:"Cheap but 2026 crisis: shortages, unrest",health:"Weak public (~52/100); private better",pension:"Specific-purpose visa (~$300/mo); pensions 0%",ag:"Mennonite co-op precedent; rural-alliance grants",stab:"Severe 2024–26 crisis, state of emergency",
+ s:[3,1,2,2,1,0],v:"Cheapest farmland and a real communal-settlement precedent, but an active political-economic crisis makes it a high-risk bet right now."},
+{c:"Namibia",iso:"NA",r:"Africa",a:"frontier-land",lat:-22.0,lng:17.0,farm:1000,cost:900,
+ land:"Cheap freehold farmland; foreigners CAN own (ag-reform pressure)",house:"No scheme; large ranches cheap",
+ tax:"Income to 37%; source-based (foreign income untaxed)",zone:"Foreigners can own freehold (non-ag freely; ag-land reform debated); build OK",
+ visa:"Investor & retirement residence; work permits",law:"Cooperative, association, trust; freehold title works",
+ life:"Stable, sparse, arid; safe by regional standards",health:"Private OK in cities; rural sparse",pension:"Retirement residence permit",ag:"Livestock/dryland; conservancy model",stab:"Stable democracy; strong-ish institutions",
+ s:[3,2,2,2,2,2],v:"Cheap freehold land foreigners can actually own under a stable government — the constraints are aridity and land-reform politics."},
+{c:"Rwanda",iso:"RW",r:"Africa",a:"easy-residency",lat:-1.9,lng:29.9,farm:4000,cost:800,
+ land:"Fertile 'land of a thousand hills'; state owns land — 99-yr leases",house:"No scheme; leasehold only",
+ tax:"Income to 30%; investor incentives",zone:"All land state-owned; foreigners get long leases; build with permits",
+ visa:"Easy — many nationalities visa-free/on-arrival; investor & work routes open",law:"Cooperative (strong, govt-promoted), company, NGO; leasehold",
+ life:"Very clean, safe, orderly; rising services",health:"Community-based insurance; improving",pension:"Investor/retirement routes",ag:"Aggressive co-op & land-consolidation policy",stab:"Very stable & orderly (governance debated)",
+ s:[2,3,2,2,2,2],v:"Clean, safe and remarkably easy to enter, with a state that champions co-ops — but you lease the land, never own it."},
+{c:"Tanzania",iso:"TZ",r:"Africa",a:"frontier-land",lat:-6.4,lng:35.0,farm:2000,cost:700,
+ land:"Cheap fertile land — but foreigners largely BARRED from owning",house:"No scheme; village land communal",
+ tax:"Income to 30%; source-based",zone:"Foreigners can't own land (except via TIC derivative right/lease); village land communal",
+ visa:"Investor & work permits; residence via investment",law:"Cooperative (Ujamaa legacy), company; land via TIC/lease",
+ life:"Cheap, warm, wildlife; developing",health:"Rural weak; private in cities",pension:"No easy retiree visa",ag:"Co-op history (Ujamaa); smallholder base",stab:"Stable but institutions developing",
+ s:[2,1,2,1,1,2],v:"Cheap fertile land and a deep (if fraught) communal-farming history — but foreign land ownership is largely closed off."},
+{c:"Ghana",iso:"GH",r:"Africa",a:"easy-residency",lat:7.9,lng:-1.0,farm:3000,cost:800,
+ land:"Cheap land; foreigners get max 50-yr leases; much land is customary/stool",house:"No scheme; leaseholds common",
+ tax:"Income to 35%; source-based",zone:"Foreigners can't own freehold (50-yr leases); customary land via chiefs",
+ visa:"Right of Abode / 'Year of Return' diaspora routes; work/residence permits",law:"Cooperative, company limited by guarantee; leasehold title",
+ life:"Stable democracy, warm, English; developing infra",health:"NHIS + private; rural gaps",pension:"Residence permits; diaspora routes",ag:"Cocoa co-ops; smallholder base",stab:"One of Africa's steadier democracies",
+ s:[2,3,2,2,2,2],v:"A stable English-speaking democracy with a real diaspora welcome — the trade is 50-year leaseholds instead of freehold."},
+{c:"South Africa",iso:"ZA",r:"Africa",a:"frontier-land",lat:-30.6,lng:22.9,farm:2500,cost:1000,
+ land:"Cheap productive farmland; foreigners CAN own freehold (reform debated)",house:"No scheme; large farms cheap",
+ tax:"Income to 45%; worldwide for residents; CGT",zone:"Foreigners can own freehold incl. farmland (expropriation debate); build OK",
+ visa:"Retirement (passive income) & investor visas; work permits",law:"Co-operative, company, trust; freehold works",
+ life:"Great climate & infra pockets; high crime",health:"Good private; strained public",pension:"Retirement visa on passive income",ag:"Strong commercial ag & co-ops",stab:"Stable democracy; crime & land-reform risk",
+ s:[3,1,2,2,2,1],v:"Cheap freehold farmland with world-class agriculture — shadowed by high crime and an unresolved land-expropriation debate."},
+{c:"New Zealand",iso:"NZ",r:"Oceania",a:"qol-premium",lat:-41.0,lng:174.0,farm:20000,cost:1700,
+ land:"Farmland dear; foreigners largely BANNED from buying (Overseas Investment Act)",house:"No cheap scheme; tight housing",
+ tax:"Income to 39%; NO general capital gains tax; no wealth tax",zone:"Overseas buyers barred from most land/farmland without consent; build strict",
+ visa:"Hard — points-based skilled/investor; no easy group route",law:"Co-operative (strong dairy — Fonterra), incorporated society, trust",
+ life:"Top-tier QoL, safe, clean; the classic hedge",health:"Universal + good private",pension:"No easy retiree visa",ag:"World-class dairy co-ops",stab:"Very stable, remote — premier collapse hedge",
+ s:[1,1,2,2,3,3],v:"The archetypal safe-haven — superb QoL and stability — but foreigners are largely barred from the land and the visa is a wall."},
+{c:"United States",iso:"US",r:"North America",a:"baseline",lat:39.8,lng:-98.6,farm:11000,cost:1900,
+ land:"Rural farmland ~$4,350/acre (2025); foreigners can own (some state limits)",house:"No national scheme; some rural land cheap",
+ tax:"Federal to 37% + state; worldwide for citizens; property tax varies",zone:"Foreigners can own land (rising state farmland limits); zoning very local",
+ visa:"Baseline — this is the domestic reference; hard for foreign groups",law:"Best-in-class: LLC, co-op statutes, community land trust, 501(c) — the CLT was invented here",
+ life:"High income; healthcare cost & safety vary",health:"Expensive; no universal system",pension:"Domestic; IRAs/401(k)",ag:"USDA programs; strong co-op law",stab:"Stable; politically polarized",
+ s:[2,0,1,3,2,2],v:"The baseline: unmatched legal tooling (LLC, co-op, the original CLT) but expensive healthcare and — for a foreign group — the hardest door of all."},
+{c:"Canada",iso:"CA",r:"North America",a:"depopulation",lat:56.1,lng:-106.3,farm:6000,cost:1500,
+ land:"Cheap prairie & maritime farmland; some provinces cap foreign farmland",house:"Rural revitalization incentives in some provinces",
+ tax:"Federal+provincial to ~53%; worldwide for residents; no wealth tax",zone:"Foreigners can own (SK/others cap farmland); build with local zoning",
+ visa:"Points-based (Express Entry), PNP, start-up visa; no easy group route",law:"Strong co-operative law, land trusts, non-profit; freehold works",
+ life:"Top QoL, safe, universal healthcare; cold",health:"Universal medicare; good",pension:"No easy retiree visa; residents taxed worldwide",ag:"Strong ag co-ops & supports",stab:"Very stable, top rule of law",
+ s:[2,1,1,3,3,3],v:"Cheap prairie land, universal healthcare and strong co-op law under a rock-stable state — gated by a points-based visa and high tax."}
+];
+
+/* composite + helpers */
+DATA.forEach(d=>{d.comp=d.s.reduce((a,b)=>a+b,0);d.name=d.c;});
+/* Low-level visa specifics per country: best route · threshold · initial term · processing · PR/citizenship timeline */
+const VD={
+"Italy":"Elective Residency (passive ~€32k/yr single, €38k couple; NO work) or Digital Nomad (2024, ~€28k). Initial 1–2 yr, renewable. Consular processing ~1–3 mo. PR 5 yr · citizenship 10 yr.",
+"Spain":"Non-Lucrative (€2,400/mo passive, no work) or Autónomo (self-employed farm co-op). 1 yr →2+2. ~1–3 mo. PR 5 yr · citizenship 10 yr (2 yr for Ibero-Americans).",
+"Portugal":"D7 (~€920/mo passive), D2 entrepreneur, or golden-visa fund €500k. AIMA backlog 6–12 mo. PR 5 yr · citizenship now 10 yr (was 5, changed May 2026).",
+"Greece":"FIP (€3,500/mo passive, no work) or Digital Nomad (€3,500/mo, consulate-only from Feb 2026). Initial 3 yr. ~2–4 mo. PR 5 yr · citizenship 7 yr + B1 exam.",
+"France":"Long-stay visitor (VLS-TS, ~€1,400/mo, no work) or Talent Passport. ~2–8 wk. 10-yr card / PR after 5 yr · citizenship 5 yr + B1.",
+"Germany":"Freelancer/self-employed or skilled-worker visa; income-proof. ~1–3 mo. Settlement ~5 yr (fast-track 3) · citizenship now 5 yr.",
+"Finland":"Self-employed/startup or remote-work; income-proof. ~1–3 mo. PR 4 yr · citizenship 5 yr + language.",
+"Croatia":"Digital nomad does NOT lead to PR (6-mo gap breaks it). Route: form a company + 51%-owner self-employ permit (no quota). PR 5 yr · citizenship 8 yr + language.",
+"Bulgaria":"Long-stay D-visa on pension/passive income or company. ~1–3 mo. PR 5 yr · citizenship 5 yr.",
+"Romania":"Long-stay on income/business. ~1–3 mo. PR 5 yr · citizenship 8 yr.",
+"Latvia":"Business/self-employ or income (EU). ~1–3 mo. PR 5 yr · citizenship 5 yr + language/history exam.",
+"Estonia":"Digital-nomad (12 mo) or startup visa; e-Residency ≠ residency. ~1–2 mo. PR 5 yr · citizenship 8 yr + language.",
+"Serbia":"Easy 1-yr residence via property/company, renewable. Fast (weeks). PR 3 yr · citizenship ~3 yr after PR.",
+"Albania":"US & many nationals: 1 YEAR visa-free on arrival. Residence via property/income, renewable. Citizenship ~5 yr.",
+"Georgia":"~95 nationalities: 1 YEAR visa-free, NO application. Residence via property ($100k→$150k Mar 2026)/business. PR after 5 yr of permits · citizenship ~10 yr.",
+"Armenia":"180 days visa-free (US). Easy residence via property/work, 1 yr renewable. ~weeks. Citizenship ~3 yr.",
+"Kazakhstan":"Investor/work permits; harder for a group. Some 30-day visa-free. PR via investment; slow.",
+"Turkey":"Residence via property (tightening) or CBI at $400k. 1–2 yr renewable, ~weeks. Citizenship 5 yr (or immediate via CBI).",
+"Cyprus":"Non-dom + 60-day/183-day tax residency; PR by investment €300k + €50k/yr income; digital-nomad option. ~2–6 mo. Citizenship 7 yr (CBI ended 2020).",
+"Morocco":"Residence via income/property, 1 yr renewable. ~1–3 mo. Long-stay straightforward; citizenship hard.",
+"Japan":"No easy group route. Business-manager (¥5M capital) or Specified-Skilled-Worker (agriculture). PR after ~10 yr. Hard.",
+"South Korea":"D-8 business or points-based F-2/F-5. Long road, months. PR after 5 yr; farming-plan route to own land. Hard.",
+"Thailand":"LTR (10-yr) or Elite (5–20 yr, fee) — easy but NO land. Retirement 50+ (฿800k). Fast. No realistic citizenship.",
+"Malaysia":"MM2H long-stay (tightened: deposit + income) or work/business. 5-yr renewable. No easy citizenship.",
+"Indonesia":"KITAS (second-home, remote-worker, or retirement 55+). 1–5 yr. Land via PMA company / leasehold only. Citizenship very hard.",
+"Philippines":"SRRV retirement (deposit $10k–50k, tiered by age) — one of the world's easiest, near-permanent. No land ownership.",
+"Vietnam":"Business/investor or work visa; no easy group route; no private land. Temporary residence cards. Citizenship very hard.",
+"Nepal":"Residential visa ($20k + $20k/yr income) or business ($100k+). 1 yr renewable. No land; citizenship 15 yr.",
+"India":"No retirement/long-stay visa; business/employment only. Hard for groups; foreigners barred from ag land. Citizenship 12 yr.",
+"Sri Lanka":"New Digital Nomad (2026, $2k/mo) or 'My Dream Home' retirement (55+, $15k deposit + $1,500/mo). 99-yr land lease only.",
+"Mexico":"Temporal (income ~$4,300/mo OR savings ~$73k) → Permanente after 4 yr; easy. ~2–4 wk consular. Citizenship 5 yr.",
+"Costa Rica":"Rentista ($2,500/mo for 2 yr, or $60k deposit) or Pensionado ($1k pension). ~few months. PR 3 yr · citizenship 7 yr.",
+"Panama":"Friendly Nations (income/company or ~$200k) or Rentista Retirado ($850/mo). Fast; grants permanent status. Citizenship 5 yr.",
+"Ecuador":"Rentista/pensioner (~$1,400/mo) or investment; low bar. ~2–3 mo. PR after 21 mo · citizenship 3 yr.",
+"Colombia":"Migrant (M) visa via pension/income/investment; 3 yr → Resident (R). ~1 mo. Citizenship 5 yr.",
+"Guatemala":"Rentista/pensionado (~$1k/mo). Bureaucratic but workable, ~months. PR after 5 yr · citizenship 5 yr.",
+"Uruguay":"Residence via steady income (~$1,500/mo); clear path. 6–12 mo. Citizenship 3 yr (married) / 5 yr — famously accessible.",
+"Paraguay":"EASIEST anywhere: temporary residence, NO income proof, ~$350–1,400, 60–90 days. PR after 2 yr · citizenship 3 yr.",
+"Argentina":"Rentista (~$2,000/mo) or investor; generous. ~few months. PR 2–3 yr · citizenship just 2 yr of residence.",
+"Chile":"Investor/rentista; 2026 govt hardened on immigration. Temp 1 yr → PR. Citizenship 5 yr.",
+"Brazil":"VIPER rentista ($2k/mo) or investor. No group route. PR after ~4 yr · citizenship 4 yr (1 yr if Portuguese-speaking family).",
+"Bolivia":"Specific-Purpose visa (~$300/mo income); bureaucratic amid 2026 crisis. PR 2 yr · citizenship 3 yr.",
+"Namibia":"Investor or retirement (proof of income) residence; work permits. Employment route slow. Citizenship 10 yr.",
+"Rwanda":"Very open: many nationalities visa-free/on-arrival; investor & work permits easy. PR via investment. Citizenship 5 yr.",
+"Tanzania":"Investor (CTC) or work permit; no easy retirement route. Residence tied to investment. Citizenship 10 yr.",
+"Ghana":"Right of Abode / diaspora routes; work & residence permits. Land is leasehold. Citizenship 5 yr (diaspora paths shorter).",
+"South Africa":"Retirement (passive ~R37k/mo) or investor/critical-skills. ~months. PR after 5 yr · citizenship 10 yr.",
+"New Zealand":"Hard: points-based skilled or investor ($5M+); no easy route. Residence → citizenship 5 yr. The wall.",
+"United States":"Domestic baseline — for a foreign group the hardest door (EB-5 investor $800k+, employment, family). Green card → citizenship 5 yr.",
+"Canada":"Points-based (Express Entry), Provincial Nominee, or Start-up visa. ~6–18 mo. PR → citizenship 3 yr. No easy group route."
+};
+const LENS_IDX={LAND:0,VISA:1,TAX:2,LAW:3,LIFE:4,STAB:5};
+const LENS_COL={LAND:"#4a9a5a",VISA:"#4f86c6",TAX:"#d9a441",LAW:"#9a6fb0",LIFE:"#3fb0a0",STAB:"#8a94a6"};
+// Colour-blind-safe viridis scale (indigo→teal→green→yellow). No red/green confusion; low=indigo, high=yellow.
+const VIRIDIS=[[70,50,126],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+function scoreColor(v,max){
+  const t=Math.max(0,Math.min(1,(v/max)));
+  const p=t*(VIRIDIS.length-1), i=Math.min(VIRIDIS.length-2,Math.floor(p)), k=p-i;
+  const c=VIRIDIS[i].map((s,j)=>Math.round(s+(VIRIDIS[i+1][j]-s)*k));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+function metricVal(d,m){return m==="comp"?d.comp:d.s[LENS_IDX[m]];}
+function metricMax(m){return m==="comp"?18:3;}
+
+/* ============ GLOBE ============ */
+let globe={inited:false};
+function initGlobe(){
+  if(globe.inited)return;
+  const canvas=document.getElementById('globe-canvas'); if(!canvas||!window.THREE)return;
+  try{
+    const wrap=document.getElementById('globe-wrap');
+    const W=wrap.clientWidth,H=wrap.clientHeight;
+    const scene=new THREE.Scene();
+    const camera=new THREE.PerspectiveCamera(45,W/H,0.1,100); camera.position.set(0,0,3.1);
+    const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio)); renderer.setSize(W,H,false);
+    scene.add(new THREE.AmbientLight(0xffffff,0.9));
+    const dir=new THREE.DirectionalLight(0xfff0d0,0.6); dir.position.set(5,3,5); scene.add(dir);
+    // sphere
+    const R=1;
+    const geo=new THREE.SphereGeometry(R,64,64);
+    const mat=new THREE.MeshPhongMaterial({color:0x1a2233,emissive:0x0a1018,shininess:6,transparent:true,opacity:0.96});
+    const sphere=new THREE.Mesh(geo,mat); scene.add(sphere);
+    new THREE.TextureLoader().load('https://unpkg.com/three-globe/example/img/earth-dark.jpg',
+      t=>{mat.map=t;mat.color.set(0x557799);mat.emissive.set(0x0b1622);mat.needsUpdate=true;},undefined,()=>{});
+    // graticule
+    const grat=new THREE.LineSegments(new THREE.WireframeGeometry(new THREE.SphereGeometry(R*1.001,24,16)),
+      new THREE.LineBasicMaterial({color:0x2a3a4a,transparent:true,opacity:0.25})); scene.add(grat);
+    // markers
+    const group=new THREE.Group(); scene.add(group);
+    const markers=[];
+    function latlng(lat,lng,r){const phi=(90-lat)*Math.PI/180,th=(lng+180)*Math.PI/180;
+      return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(th),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(th));}
+    DATA.forEach((d,i)=>{
+      const pos=latlng(d.lat,d.lng,R*1.02);
+      const m=new THREE.Mesh(new THREE.SphereGeometry(0.02,16,16),new THREE.MeshBasicMaterial({color:0xffffff}));
+      m.position.copy(pos); m.userData={i}; group.add(m); markers.push(m);
+      const halo=new THREE.Mesh(new THREE.SphereGeometry(0.032,16,16),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.18}));
+      halo.position.copy(pos); group.add(halo); m.userData.halo=halo;
+    });
+    const controls=new THREE.OrbitControls(camera,renderer.domElement);
+    controls.enableDamping=true; controls.dampingFactor=0.08; controls.rotateSpeed=0.5;
+    controls.minDistance=1.5; controls.maxDistance=6; controls.enablePan=false; controls.autoRotate=true; controls.autoRotateSpeed=0.35;
+    const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+    function pick(ev){const r=canvas.getBoundingClientRect();
+      mouse.x=((ev.clientX-r.left)/r.width)*2-1; mouse.y=-((ev.clientY-r.top)/r.height)*2+1;
+      ray.setFromCamera(mouse,camera); const hits=ray.intersectObjects(markers);
+      return hits.length?hits[0].object.userData.i:-1;}
+    let downXY=null;
+    canvas.addEventListener('pointerdown',e=>downXY=[e.clientX,e.clientY]);
+    canvas.addEventListener('pointerup',e=>{ if(!downXY)return;
+      const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]); downXY=null;
+      if(moved>6)return; const i=pick(e); if(i>=0){showCard(i);controls.autoRotate=false;}});
+    globe={inited:true,scene,camera,renderer,controls,markers,metric:"comp",selected:-1,quiz:null};
+    recolorGlobe();
+    (function loop(){ if(!globe.inited)return; requestAnimationFrame(loop);
+      globe.markers.forEach(m=>{const s=1+0.12*Math.sin(Date.now()*0.003+m.userData.i); if(m.userData.halo)m.userData.halo.scale.setScalar(s);});
+      controls.update(); renderer.render(scene,camera); })();
+    window.addEventListener('resize',resizeGlobe);
+  }catch(err){console.warn('globe',err);document.getElementById('globe-fallback').style.display='block';}
+}
+function resizeGlobe(){ if(!globe.inited)return; const wrap=document.getElementById('globe-wrap');
+  const W=wrap.clientWidth,H=wrap.clientHeight; globe.camera.aspect=W/H; globe.camera.updateProjectionMatrix(); globe.renderer.setSize(W,H,false);}
+function recolorGlobe(){ if(!globe.inited)return;
+  const m=globe.metric;
+  globe.markers.forEach((mk,i)=>{const d=DATA[i]; let v,max;
+    if(globe.quiz){v=globe.quiz[i];max=100;} else {v=metricVal(d,m);max=metricMax(m);}
+    const col=new THREE.Color(scoreColor(v,max)); mk.material.color=col; if(mk.userData.halo)mk.userData.halo.material.color=col;
+    const sz=0.016+0.02*(v/max); mk.scale.setScalar(sz/0.02);});
+  document.getElementById('g-metric-lbl').textContent=globe.quiz?"your fit":(m==="comp"?"total suitability":m+" score");
+}
+function showCard(i){const d=DATA[i];const el=document.getElementById('g-card');
+  el.style.display='block';
+  const sc=LENSES.map(l=>`<span class="sc" style="background:${LENS_COL[l]}">${l} ${d.s[LENS_IDX[l]]}</span>`).join('');
+  el.innerHTML=`<h3>${d.c} <span style="font-size:11px;color:#8a7f66">${d.r}</span></h3>
+    <div class="scores">${sc}</div>
+    <div class="verdict">"${d.v}"</div>
+    <div class="row"><span class="k">Land:</span> ${d.land}</div>
+    <div class="row"><span class="k">Visa:</span> ${d.visa}</div>
+    <div class="row"><span class="k">Tax:</span> ${d.tax}</div>
+    <div class="row"><span class="k">Zoning:</span> ${d.zone}</div>
+    <div class="row"><span class="k">Communal law:</span> ${d.law}</div>
+    <div class="row"><span class="k">Cost/mo:</span> ~$${d.cost} · <span class="k">Farmland:</span> ~$${d.farm.toLocaleString()}/ha</div>
+    <div class="row"><span class="k">Healthcare:</span> ${d.health}</div>
+    <div class="row"><span class="k">Pension:</span> ${d.pension}</div>
+    <div class="row"><span class="k">Ag support:</span> ${d.ag}</div>
+    <div class="row" style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(212,163,115,.25)"><span class="k">🛂 Visa specifics:</span> ${VD[d.c]||'—'}</div>
+    <div class="row"><span class="k">Cost of living:</span> ~$${d.cost}/mo · <span class="k">Farmland:</span> ~$${d.farm.toLocaleString()}/ha</div>
+    <div class="row" style="margin-top:5px"><span class="k">Total:</span> ${d.comp}/18 · archetype: ${d.a}</div>`;
+}
+document.getElementById('g-metric').addEventListener('change',e=>{if(globe.inited){globe.metric=e.target.value;globe.quiz=null;recolorGlobe();}});
+
+/* ============ QUESTIONNAIRE ============ */
+const quizWeights={LAND:3,VISA:3,TAX:2,LAW:2,LIFE:3,STAB:3};
+const PRESETS={land:{LAND:5,VISA:5,TAX:2,LAW:3,LIFE:1,STAB:1},digital:{LAND:1,VISA:4,TAX:5,LAW:1,LIFE:3,STAB:2},
+  qol:{LAND:1,VISA:2,TAX:1,LAW:1,LIFE:5,STAB:5},hedge:{LAND:3,VISA:3,TAX:2,LAW:2,LIFE:2,STAB:5},balanced:{LAND:3,VISA:3,TAX:3,LAW:3,LIFE:3,STAB:3}};
+function quizFit(d){let num=0,den=0;LENSES.forEach(l=>{const w=quizWeights[l];num+=w*d.s[LENS_IDX[l]];den+=w*3;});return den?Math.round(100*num/den):0;}
+function renderQuiz(){
+  const ranked=DATA.map((d,i)=>({d,i,fit:quizFit(d)})).sort((a,b)=>b.fit-a.fit).slice(0,10);
+  const ol=document.getElementById('quiz-list');
+  if(ol) ol.innerHTML=ranked.map((r,k)=>`<li><span class="rank">${k+1}</span><span class="nm">${r.d.c}</span>
+    <span class="barwrap"><span class="barfill" style="width:${r.fit}%"></span></span><span class="fit">${r.fit}</span></li>`).join('');
+  const t5=document.getElementById('quiz-top5');
+  if(t5) t5.innerHTML=ranked.slice(0,6).map((r,k)=>`<span class="chip">${k+1}. ${r.d.c} <b style="color:var(--accent)">${r.fit}</b></span>`).join('');
+  // push fit to globe
+  const top=document.getElementById('quiz-top');
+  if(top&&ranked[0]) top.innerHTML=`Your #1 match&nbsp; →&nbsp; <b>${ranked[0].d.c}</b> &nbsp;<span class="mono">${ranked[0].fit}/100 fit</span> &nbsp;·&nbsp; then ${ranked[1].d.c}, ${ranked[2].d.c}`;
+  if(globe.inited){const fits=DATA.map(d=>quizFit(d));globe.quiz=fits;globe.metric="comp";const sel=document.getElementById('g-metric');if(sel)sel.value="comp";recolorGlobe();}
+}
+document.querySelectorAll('input[data-lens]').forEach(inp=>{
+  inp.addEventListener('input',e=>{const l=e.target.dataset.lens;quizWeights[l]=+e.target.value;
+    const wv=e.target.parentElement.querySelector('.wv'); if(wv)wv.textContent=e.target.value;renderQuiz();});});
+document.querySelectorAll('.preset[data-p]').forEach(b=>b.addEventListener('click',()=>{
+  const p=PRESETS[b.dataset.p];Object.assign(quizWeights,p);
+  document.querySelectorAll('input[data-lens]').forEach(inp=>{inp.value=p[inp.dataset.lens];
+    const wv=inp.parentElement.querySelector('.wv'); if(wv)wv.textContent=p[inp.dataset.lens];});renderQuiz();}));
+const qbl=document.getElementById('quiz-blind');
+if(qbl) qbl.addEventListener('click',e=>{
+  ['quiz-top','quiz-top5'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('blind');});
+  const on=document.getElementById('quiz-top').classList.contains('blind');
+  e.target.textContent=on?'👁 Unblind':'🙈 Blind the numbers';});
+
+/* ============ CTA plan builder ============ */
+function computePlan(){
+  const g=document.getElementById('plan-group'), p=document.getElementById('plan-prio');
+  if(!g||!p)return;
+  const W={LAND:1,VISA:1,TAX:1,LAW:1,LIFE:1,STAB:1};
+  const groupW={ret:{LIFE:3,TAX:3,STAB:2,VISA:1},remote:{TAX:3,VISA:3,LAND:2},fam:{LIFE:3,LAW:2,STAB:3},young:{LAND:3,VISA:3,TAX:2,LIFE:0}};
+  const prioW={cost:{LAND:3,TAX:2},move:{VISA:4},qol:{LIFE:3,STAB:2},own:{LAND:3,LAW:3}};
+  Object.assign(W,groupW[g.value]||{}); const pv=prioW[p.value]||{}; for(const k in pv)W[k]=(W[k]||0)+pv[k];
+  const ranked=DATA.map(d=>{let num=0,den=0;LENSES.forEach(l=>{num+=W[l]*d.s[LENS_IDX[l]];den+=W[l]*3;});return {d,f:den?Math.round(100*num/den):0};}).sort((a,b)=>b.f-a.f);
+  const top=ranked[0].d, alt=ranked.slice(1,3).map(r=>r.d.c).join(', ');
+  document.getElementById('plan-out').innerHTML=`Start with <b>${top.c}</b> <span style="color:var(--accent)" class="mono">${ranked[0].f}/100</span> — "${top.v}"<br><span style="color:#9c8f74">also worth a look:</span> ${alt}.<br><span style="color:#9c8f74">🛂 route:</span> ${VD[top.c]}<br><span style="color:#9c8f74">🏛️ structure:</span> hold the land in a trust/foundation, run the farm as a co-op.`;
+}
+['plan-group','plan-prio'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('change',computePlan);});
+computePlan();
+
+/* ============ REVEAL + zoom + comments ============ */
+Reveal.initialize({hash:true,slideNumber:'c/t',width:1280,height:760,margin:0.045,minScale:0.2,maxScale:1.6,
+  transition:'fade',plugins:[RevealNotes]});
+Reveal.on('ready',()=>{renderQuiz();maybeGlobe();updateComment();});
+Reveal.on('slidechanged',()=>{maybeGlobe();updateComment();renderQuiz();setTimeout(resizeGlobe,60);});
+function maybeGlobe(){const cur=Reveal.getCurrentSlide(); if(cur&&cur.querySelector('#globe-wrap')){initGlobe();setTimeout(resizeGlobe,80);}}
+
+/* zoom */
+let zoom=1;const zEl=document.documentElement;
+function setZoom(z){zoom=Math.max(0.5,Math.min(2,z));document.querySelectorAll('.reveal .slides>section').forEach(s=>s.style.setProperty('--slide-zoom',zoom));
+  document.querySelectorAll('.reveal .slides>section').forEach(s=>s.style.zoom=zoom);document.getElementById('zoom-level').textContent=Math.round(zoom*100)+'%';}
+document.getElementById('zoom-in').onclick=()=>setZoom(zoom+0.1);
+document.getElementById('zoom-out').onclick=()=>setZoom(zoom-0.1);
+document.getElementById('zoom-reset').onclick=()=>setZoom(1);
+
+/* per-slide comments */
+const CKEY='session6-comments-v1';
+function comments(){try{return JSON.parse(localStorage.getItem(CKEY)||'{}');}catch(e){return {};}}
+function slideId(){const i=Reveal.getIndices();return `h${i.h}v${i.v||0}`;}
+function slideTitle(){const s=Reveal.getCurrentSlide();const h=s&&s.querySelector('h1,h2');return h?h.textContent.trim():slideId();}
+function updateComment(){const c=comments();document.getElementById('cb-text').value=c[slideId()]?.text||'';
+  document.getElementById('cb-slide').textContent=(Reveal.getIndices().h+1)+' · '+slideTitle().slice(0,22);}
+document.getElementById('cb-text').addEventListener('input',e=>{const c=comments();c[slideId()]={title:slideTitle(),text:e.target.value};localStorage.setItem(CKEY,JSON.stringify(c));});
+document.getElementById('cb-copy').addEventListener('click',()=>{const c=comments();
+  let md="# Session 6 — Choosing Ground — my notes\n\n";Object.values(c).forEach(v=>{if(v.text&&v.text.trim())md+=`## ${v.title}\n${v.text}\n\n`;});
+  navigator.clipboard.writeText(md).then(()=>{document.getElementById('cb-copy').textContent='Copied!';setTimeout(()=>document.getElementById('cb-copy').textContent='Copy all',1200);});});
+document.addEventListener('keydown',e=>{if(e.key==='c'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+  const b=document.getElementById('comment-bar');b.style.display=b.style.display==='none'?'flex':'none';}});
+</script>
+</body>
+</html>
