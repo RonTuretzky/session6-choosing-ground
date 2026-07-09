@@ -154,6 +154,13 @@
 .hw{max-width:780px;margin:6px auto;text-align:left;}
 .hw ol{padding-left:20px;} .hw li{font-size:.6em;line-height:1.45;margin:8px 0;}
 .hw li b{color:var(--wheat);}
+/* stability mini-bars in the country card */
+.stbars{margin:3px 0 2px;}
+.stb{display:flex;align-items:center;gap:6px;margin:2px 0;font-size:10px;}
+.stb>span:first-child{flex:0 0 78px;color:#cdbf9a;}
+.stbar{flex:1;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.stbar>span{display:block;height:100%;border-radius:4px;}
+.stv{flex:0 0 20px;text-align:right;font-family:"JetBrains Mono",monospace;color:var(--accent);}
 </style>
 </head>
 <body>
@@ -295,6 +302,13 @@
         <option value="LAW">LAW — communal vehicles</option>
         <option value="LIFE">LIFE — quality of life</option>
         <option value="STAB">STAB — stability</option>
+        <optgroup label="Resilience — brace for…">
+          <option value="res:overall">Resilience — overall</option>
+          <option value="res:currency">…a currency crisis</option>
+          <option value="res:war">…war in the region</option>
+          <option value="res:climate">…a climate shock</option>
+          <option value="res:authoritarian">…an authoritarian turn</option>
+        </optgroup>
       </select>
     </div>
     <div class="g-panel" id="g-legend"><div style="margin-bottom:2px"><b id="g-metric-lbl" style="color:var(--wheat)">total suitability</b></div><div class="bar"></div><div class="ends"><span>◔ lower</span><span>higher ●</span></div></div>
@@ -408,6 +422,8 @@
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/earcut@2.2.4/dist/earcut.min.js"></script>
 
 <script>
 /* ============ DATA — 50 jurisdictions (2026 synthesis) ============ */
@@ -771,6 +787,42 @@ const VD={
 "United States":"Domestic baseline — for a foreign group the hardest door (EB-5 investor $800k+, employment, family). Green card → citizenship 5 yr.",
 "Canada":"Points-based (Express Entry), Provincial Nominee, or Start-up visa. ~6–18 mo. PR → citizenship 3 yr. No easy group route."
 };
+/* Stability, broken into 6 sub-dimensions (0–100, higher = more resilient).
+   Grounded in 2026 research: Global Peace Index 2025, WJP Rule of Law 2025, Fragile States Index,
+   ND-GAIN climate readiness, Numbeo safety, + per-country 2026 developments. A synthesis — decision-support. */
+const STAB6={
+"Italy":{pol:62,law:68,safe:70,econ:60,peace:75,clim:60},"Spain":{pol:70,law:72,safe:74,econ:66,peace:78,clim:56},
+"Portugal":{pol:68,law:78,safe:88,econ:66,peace:92,clim:58},"Greece":{pol:66,law:62,safe:74,econ:60,peace:70,clim:54},
+"France":{pol:70,law:74,safe:64,econ:66,peace:66,clim:66},"Germany":{pol:80,law:82,safe:74,econ:74,peace:80,clim:74},
+"Finland":{pol:88,law:90,safe:86,econ:78,peace:80,clim:82},"Croatia":{pol:74,law:64,safe:84,econ:66,peace:86,clim:62},
+"Bulgaria":{pol:60,law:52,safe:74,econ:66,peace:74,clim:60},"Romania":{pol:64,law:60,safe:76,econ:64,peace:78,clim:60},
+"Latvia":{pol:70,law:72,safe:74,econ:68,peace:60,clim:74},"Estonia":{pol:80,law:84,safe:82,econ:74,peace:58,clim:76},
+"Serbia":{pol:52,law:50,safe:76,econ:60,peace:66,clim:58},"Albania":{pol:52,law:46,safe:72,econ:56,peace:74,clim:56},
+"Georgia":{pol:36,law:52,safe:84,econ:60,peace:64,clim:58},"Armenia":{pol:48,law:52,safe:78,econ:56,peace:38,clim:52},
+"Kazakhstan":{pol:44,law:42,safe:66,econ:60,peace:66,clim:50},"Turkey":{pol:38,law:36,safe:64,econ:30,peace:40,clim:48},
+"Cyprus":{pol:66,law:70,safe:84,econ:70,peace:62,clim:50},"Morocco":{pol:60,law:52,safe:72,econ:58,peace:74,clim:44},
+"Japan":{pol:82,law:82,safe:92,econ:64,peace:88,clim:72},"South Korea":{pol:70,law:76,safe:86,econ:72,peace:64,clim:70},
+"Thailand":{pol:50,law:50,safe:64,econ:64,peace:60,clim:50},"Malaysia":{pol:62,law:58,safe:64,econ:66,peace:84,clim:56},
+"Indonesia":{pol:60,law:50,safe:66,econ:62,peace:64,clim:44},"Philippines":{pol:50,law:46,safe:56,econ:60,peace:50,clim:34},
+"Vietnam":{pol:62,law:48,safe:74,econ:64,peace:72,clim:42},"Nepal":{pol:32,law:44,safe:66,econ:40,peace:64,clim:32},
+"India":{pol:56,law:52,safe:58,econ:62,peace:54,clim:38},"Sri Lanka":{pol:44,law:50,safe:66,econ:38,peace:60,clim:40},
+"Mexico":{pol:52,law:40,safe:40,econ:62,peace:44,clim:50},"Costa Rica":{pol:80,law:70,safe:64,econ:64,peace:84,clim:56},
+"Panama":{pol:64,law:54,safe:60,econ:72,peace:78,clim:52},"Ecuador":{pol:44,law:42,safe:36,econ:62,peace:40,clim:46},
+"Colombia":{pol:50,law:46,safe:44,econ:60,peace:38,clim:52},"Guatemala":{pol:42,law:36,safe:44,econ:58,peace:52,clim:38},
+"Uruguay":{pol:86,law:78,safe:70,econ:72,peace:84,clim:62},"Paraguay":{pol:52,law:38,safe:64,econ:62,peace:74,clim:50},
+"Argentina":{pol:48,law:52,safe:62,econ:30,peace:70,clim:60},"Chile":{pol:70,law:72,safe:66,econ:70,peace:74,clim:58},
+"Brazil":{pol:56,law:52,safe:46,econ:58,peace:54,clim:56},"Bolivia":{pol:28,law:40,safe:56,econ:30,peace:62,clim:40},
+"Namibia":{pol:64,law:58,safe:56,econ:56,peace:76,clim:38},"Rwanda":{pol:56,law:56,safe:80,econ:60,peace:72,clim:44},
+"Tanzania":{pol:50,law:46,safe:62,econ:56,peace:68,clim:40},"Ghana":{pol:60,law:56,safe:62,econ:50,peace:74,clim:44},
+"South Africa":{pol:54,law:54,safe:28,econ:54,peace:46,clim:46},"New Zealand":{pol:86,law:88,safe:84,econ:74,peace:92,clim:74},
+"United States":{pol:60,law:66,safe:52,econ:72,peace:50,clim:66},"Canada":{pol:82,law:82,safe:78,econ:74,peace:82,clim:74}
+};
+/* Resilience scenarios re-weight the 6 stability dims (which shock are you bracing for?) */
+const STAB_DIMS=["pol","law","safe","econ","peace","clim"];
+const STAB_LABELS=["Political","Rule of law","Safety","Economic","Peace/conflict","Climate"];
+const SCENARIOS={overall:[1,1,1,1,1,1],currency:[0.6,1,0.3,3,0.4,0.4],war:[1.5,0.6,0.6,0.6,3,0.3],climate:[0.4,0.5,0.4,1,0.4,3],authoritarian:[2,3,1,0.4,1.5,0.3]};
+function stabBlend(d,mode){const s=STAB6[d.c]; if(!s)return 50; const W=SCENARIOS[mode]||SCENARIOS.overall;
+  let num=0,den=0; STAB_DIMS.forEach((k,i)=>{num+=W[i]*s[k];den+=W[i];}); return num/den;}
 const LENS_IDX={LAND:0,VISA:1,TAX:2,LAW:3,LIFE:4,STAB:5};
 const LENS_COL={LAND:"#4a9a5a",VISA:"#4f86c6",TAX:"#d9a441",LAW:"#9a6fb0",LIFE:"#3fb0a0",STAB:"#8a94a6"};
 // Colour-blind-safe viridis scale (indigo→teal→green→yellow). No red/green confusion; low=indigo, high=yellow.
@@ -781,8 +833,8 @@ function scoreColor(v,max){
   const c=VIRIDIS[i].map((s,j)=>Math.round(s+(VIRIDIS[i+1][j]-s)*k));
   return `rgb(${c[0]},${c[1]},${c[2]})`;
 }
-function metricVal(d,m){return m==="comp"?d.comp:d.s[LENS_IDX[m]];}
-function metricMax(m){return m==="comp"?18:3;}
+function metricVal(d,m){ if(m==="comp")return d.comp; if(m.slice(0,4)==="res:")return stabBlend(d,m.slice(4)); return d.s[LENS_IDX[m]];}
+function metricMax(m){ if(m==="comp")return 18; if(m.slice(0,4)==="res:")return 100; return 3;}
 
 /* ============ GLOBE ============ */
 let globe={inited:false};
@@ -826,15 +878,17 @@ function initGlobe(){
     const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
     function pick(ev){const r=canvas.getBoundingClientRect();
       mouse.x=((ev.clientX-r.left)/r.width)*2-1; mouse.y=-((ev.clientY-r.top)/r.height)*2+1;
-      ray.setFromCamera(mouse,camera); const hits=ray.intersectObjects(markers);
+      ray.setFromCamera(mouse,camera);
+      if(globe.useFill&&globe.fills.length){const hf=ray.intersectObjects(globe.fills);return hf.length?hf[0].object.userData.ci:-1;}
+      const hits=ray.intersectObjects(markers);
       return hits.length?hits[0].object.userData.i:-1;}
     let downXY=null;
     canvas.addEventListener('pointerdown',e=>downXY=[e.clientX,e.clientY]);
     canvas.addEventListener('pointerup',e=>{ if(!downXY)return;
       const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]); downXY=null;
       if(moved>6)return; const i=pick(e); if(i>=0){showCard(i);controls.autoRotate=false;}});
-    globe={inited:true,scene,camera,renderer,controls,markers,metric:"comp",selected:-1,quiz:null};
-    recolorGlobe();
+    globe={inited:true,scene,camera,renderer,controls,markers,group,R,fills:[],useFill:false,metric:"comp",selected:-1,quiz:null};
+    recolorGlobe(); buildCountryLayer();
     (function loop(){ if(!globe.inited)return; requestAnimationFrame(loop);
       globe.markers.forEach(m=>{const s=1+0.12*Math.sin(Date.now()*0.003+m.userData.i); if(m.userData.halo)m.userData.halo.scale.setScalar(s);});
       controls.update(); renderer.render(scene,camera); })();
@@ -843,13 +897,59 @@ function initGlobe(){
 }
 function resizeGlobe(){ if(!globe.inited)return; const wrap=document.getElementById('globe-wrap');
   const W=wrap.clientWidth,H=wrap.clientHeight; globe.camera.aspect=W/H; globe.camera.updateProjectionMatrix(); globe.renderer.setSize(W,H,false);}
+/* Build filled country polygons + borders from world-atlas GeoJSON (earcut-triangulated onto the sphere).
+   Runs after the dot markers exist; on success it hides the dots. On any failure the dots remain. */
+function buildCountryLayer(){
+  if(!globe.inited || !window.topojson || !window.earcut || !window.THREE){return;}
+  const nameIdx={}; DATA.forEach((d,i)=>{nameIdx[d.c]=i;});
+  const alias={'United States of America':'United States'};
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>r.json()).then(topo=>{
+    const T=window.THREE, R=globe.R, grp=globe.group;
+    const feats=topojson.feature(topo, topo.objects.countries).features;
+    const v=(lng,lat,r)=>{const phi=(90-lat)*Math.PI/180,th=(lng+180)*Math.PI/180;
+      return new T.Vector3(-r*Math.sin(phi)*Math.cos(th), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(th));};
+    const faint=new T.LineBasicMaterial({color:0x415064,transparent:true,opacity:0.32});
+    const bright=new T.LineBasicMaterial({color:0xd8cca6,transparent:true,opacity:0.65});
+    const fills=[];
+    feats.forEach(f=>{ try{
+      const nm=alias[f.properties.name]||f.properties.name; const ci=nameIdx.hasOwnProperty(nm)?nameIdx[nm]:null;
+      const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+      polys.forEach(poly=>poly.forEach(ring=>{
+        const pts=ring.map(c=>v(c[0],c[1],R*1.004));
+        grp.add(new T.Line(new T.BufferGeometry().setFromPoints(pts), ci!=null?bright:faint));
+      }));
+      if(ci!=null){ polys.forEach(poly=>{
+        const lngs=poly[0].map(c=>c[0]);
+        if(Math.max.apply(null,lngs)-Math.min.apply(null,lngs) > 170) return; // skip antimeridian-wrapping ring
+        const flat=[], holes=[];
+        poly.forEach((ring,ri)=>{ if(ri>0) holes.push(flat.length/2); ring.forEach(c=>{flat.push(c[0],c[1]);}); });
+        const tri=earcut(flat,holes,2); if(!tri.length) return;
+        const pos=[]; for(let i=0;i<flat.length;i+=2){const p=v(flat[i],flat[i+1],R*1.0016); pos.push(p.x,p.y,p.z);}
+        const g=new T.BufferGeometry();
+        g.setAttribute('position', new T.Float32BufferAttribute(pos,3)); g.setIndex(tri);
+        const mesh=new T.Mesh(g, new T.MeshBasicMaterial({color:0x888888,transparent:true,opacity:0.85,side:T.DoubleSide,depthWrite:false}));
+        mesh.userData={ci}; grp.add(mesh); fills.push(mesh);
+      }); }
+    }catch(e){} });
+    globe.fills=fills; globe.useFill=fills.length>10;
+    if(globe.useFill){ globe.markers.forEach(mk=>{mk.visible=false; if(mk.userData.halo)mk.userData.halo.visible=false;}); }
+    recolorGlobe();
+  }).catch(e=>{console.warn('country layer failed, keeping dot markers:',e);});
+}
 function recolorGlobe(){ if(!globe.inited)return;
   const m=globe.metric;
-  globe.markers.forEach((mk,i)=>{const d=DATA[i]; let v,max;
-    if(globe.quiz){v=globe.quiz[i];max=100;} else {v=metricVal(d,m);max=metricMax(m);}
-    const col=new THREE.Color(scoreColor(v,max)); mk.material.color=col; if(mk.userData.halo)mk.userData.halo.material.color=col;
-    const sz=0.016+0.02*(v/max); mk.scale.setScalar(sz/0.02);});
-  document.getElementById('g-metric-lbl').textContent=globe.quiz?"your fit":(m==="comp"?"total suitability":m+" score");
+  if(globe.useFill){
+    globe.fills.forEach(mk=>{const d=DATA[mk.userData.ci]; let val,max;
+      if(globe.quiz){val=globe.quiz[mk.userData.ci];max=100;} else {val=metricVal(d,m);max=metricMax(m);}
+      mk.material.color.set(scoreColor(val,max)); mk.material.opacity=0.5+0.45*(val/max);});
+  } else {
+    globe.markers.forEach((mk,i)=>{const d=DATA[i]; let val,max;
+      if(globe.quiz){val=globe.quiz[i];max=100;} else {val=metricVal(d,m);max=metricMax(m);}
+      const col=new THREE.Color(scoreColor(val,max)); mk.material.color=col; if(mk.userData.halo)mk.userData.halo.material.color=col;
+      const sz=0.016+0.02*(val/max); mk.scale.setScalar(sz/0.02);});
+  }
+  const lbl=globe.quiz?"your fit":(m==="comp"?"total suitability":(m.slice(0,4)==="res:"?("resilience · "+m.slice(4)):(m+" score")));
+  const el=document.getElementById('g-metric-lbl'); if(el) el.textContent=lbl;
 }
 function showCard(i){const d=DATA[i];const el=document.getElementById('g-card');
   el.style.display='block';
@@ -866,8 +966,9 @@ function showCard(i){const d=DATA[i];const el=document.getElementById('g-card');
     <div class="row"><span class="k">Healthcare:</span> ${d.health}</div>
     <div class="row"><span class="k">Pension:</span> ${d.pension}</div>
     <div class="row"><span class="k">Ag support:</span> ${d.ag}</div>
+    <div class="row" style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(212,163,115,.25)"><span class="k">🛡️ Resilience profile:</span></div>
+    <div class="stbars">${STAB6[d.c]?STAB_DIMS.map((k,i)=>{const val=STAB6[d.c][k];return `<div class="stb"><span>${STAB_LABELS[i]}</span><span class="stbar"><span style="width:${val}%;background:${scoreColor(val,100)}"></span></span><span class="stv">${val}</span></div>`;}).join(''):'—'}</div>
     <div class="row" style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(212,163,115,.25)"><span class="k">🛂 Visa specifics:</span> ${VD[d.c]||'—'}</div>
-    <div class="row"><span class="k">Cost of living:</span> ~$${d.cost}/mo · <span class="k">Farmland:</span> ~$${d.farm.toLocaleString()}/ha</div>
     <div class="row" style="margin-top:5px"><span class="k">Total:</span> ${d.comp}/18 · archetype: ${d.a}</div>`;
 }
 document.getElementById('g-metric').addEventListener('change',e=>{if(globe.inited){globe.metric=e.target.value;globe.quiz=null;recolorGlobe();}});
