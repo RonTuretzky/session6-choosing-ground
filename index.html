@@ -170,6 +170,25 @@
 .tax-rate{font-size:15px;color:var(--wheat);margin-bottom:4px;} .tax-rate b{color:var(--accent);}
 .tax-why{font-size:12px;color:#e9dfc6;line-height:1.5;}
 .tax-us{margin-top:8px;padding:7px 10px;background:rgba(79,134,198,.14);border-left:3px solid #4f86c6;border-radius:5px;font-size:11.5px;color:#e9dfc6;line-height:1.45;}
+/* CTA journey wizard */
+#wiz{max-width:840px;margin:8px auto 0;font-family:"Inter",sans-serif;text-align:center;}
+.wiz-prog{display:flex;gap:8px;justify-content:center;margin-bottom:12px;}
+.wiz-prog .dot{width:9px;height:9px;border-radius:50%;background:rgba(212,163,115,.25);transition:background .3s;}
+.wiz-prog .dot.active{background:var(--accent);}
+.wiz-step{display:none;} .wiz-step.on{display:block;}
+.wiz-q{font-size:16px;color:var(--wheat);margin-bottom:12px;font-weight:600;}
+.opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.opt{background:rgba(255,255,255,.04);border:1px solid rgba(212,163,115,.35);border-radius:9px;color:#e9dfc6;font-family:inherit;font-size:13px;line-height:1.35;padding:12px 16px;cursor:pointer;min-width:148px;transition:all .15s;}
+.opt small{color:#9c8f74;font-size:10.5px;}
+.opt:hover{border-color:var(--accent);background:rgba(212,163,115,.12);transform:translateY(-2px);}
+.opt.sel{border-color:var(--accent);background:rgba(212,163,115,.22);}
+.wiz-nav{margin-top:14px;display:flex;gap:8px;justify-content:center;}
+#wiz-result{text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--accent);border-radius:10px;padding:14px 18px;animation:wrpop .4s ease;}
+@keyframes wrpop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.wr-top{font-size:18px;color:#e9dfc6;} .wr-top b{color:var(--wheat);font-size:22px;} .wr-fit{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent);margin-left:6px;}
+.wr-v{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--accent);font-size:16px;margin:8px 0;}
+.wr-row{font-size:12px;color:#e9dfc6;line-height:1.5;margin:4px 0;} .wr-row>span:first-child{color:#9c8f74;display:inline-block;min-width:98px;}
+.wr-note{margin-top:10px;font-size:11px;color:#9c8f74;font-style:italic;}
 </style>
 </head>
 <body>
@@ -391,24 +410,39 @@
 <section data-background-color="#14140f">
   <p class="kicker">Session 6 · Choosing Ground</p>
   <h2>Build your starting point</h2>
-  <div id="plan">
-    <div class="pick">
-      <span>My group is mostly</span>
-      <select id="plan-group">
-        <option value="ret">retirees on pensions/savings</option>
-        <option value="remote">remote workers</option>
-        <option value="fam">families &amp; a mix</option>
-        <option value="young">young &amp; cash-poor</option>
-      </select>
-      <span>and we care most about</span>
-      <select id="plan-prio">
-        <option value="own">owning the land outright</option>
-        <option value="cost">the cheapest total cost</option>
-        <option value="move">moving everyone easily</option>
-        <option value="qol">quality of life</option>
-      </select>
+  <div id="wiz">
+    <div class="wiz-prog"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="wiz-step on" data-step="0">
+      <div class="wiz-q">1 · Who's in your group?</div>
+      <div class="opts">
+        <button class="opt" data-k="group" data-v="ret">👴 Mostly retirees<br><small>living on pensions / savings</small></button>
+        <button class="opt" data-k="group" data-v="remote">💻 Remote workers<br><small>keep jobs, pool income</small></button>
+        <button class="opt" data-k="group" data-v="fam">👨‍👩‍👧 Families &amp; a mix<br><small>kids, schools, roots</small></button>
+        <button class="opt" data-k="group" data-v="young">🌱 Young &amp; cash-poor<br><small>sweat equity, low budget</small></button>
+      </div>
     </div>
-    <div id="plan-out"></div>
+    <div class="wiz-step" data-step="1">
+      <div class="wiz-q">2 · What matters most?</div>
+      <div class="opts">
+        <button class="opt" data-k="prio" data-v="own">🏡 Owning the land<br><small>outright title</small></button>
+        <button class="opt" data-k="prio" data-v="cost">💸 Cheapest total cost</button>
+        <button class="opt" data-k="prio" data-v="move">🚪 Moving everyone<br><small>the whole group, easily</small></button>
+        <button class="opt" data-k="prio" data-v="qol">🌿 Quality of life</button>
+      </div>
+    </div>
+    <div class="wiz-step" data-step="2">
+      <div class="wiz-q">3 · How much risk can you stomach?</div>
+      <div class="opts">
+        <button class="opt" data-k="risk" data-v="safe">🛡️ Rock-solid only<br><small>stability above all</small></button>
+        <button class="opt" data-k="risk" data-v="balanced">⚖️ Balanced</button>
+        <button class="opt" data-k="risk" data-v="bold">🎲 Trade stability for cost</button>
+      </div>
+    </div>
+    <div class="wiz-step" data-step="3"><div id="wiz-result"></div></div>
+    <div class="wiz-nav">
+      <button id="wiz-back" class="preset" style="visibility:hidden">← Back</button>
+      <button id="wiz-restart" class="preset">↺ Start over</button>
+    </div>
   </div>
   <p class="lede" style="margin-top:14px">Cheap land is common. Land you can own, build on, move your people to, and hold as a commune — that's the needle. This deck is the magnet.</p>
   <p class="sources" style="margin-top:14px">Data: a July 2026 synthesis of national tax/immigration/land-law sources (Global Citizen Solutions, PwC/KPMG tax summaries, Eurostat &amp; national ag-land indices, migration authorities, Numbeo, Global Peace Index) + course research. Decision-support, not legal advice — verify with a local attorney before acting.</p>
@@ -1062,6 +1096,43 @@ function computeTax(){
 }
 ['tax-src','tax-sys','tax-us'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('change',computeTax);});
 computeTax();
+
+/* ============ CTA journey wizard ============ */
+(function(){
+  const groupW={ret:{LIFE:3,TAX:3,STAB:2,VISA:1},remote:{TAX:3,VISA:3,LAND:2},fam:{LIFE:3,LAW:2,STAB:3},young:{LAND:3,VISA:3,TAX:2,LIFE:0}};
+  const prioW={own:{LAND:3,LAW:3},cost:{LAND:3,TAX:2},move:{VISA:4},qol:{LIFE:3,STAB:2}};
+  const riskW={safe:{STAB:3,LIFE:1},balanced:{},bold:{STAB:-1,LAND:2,TAX:1}};
+  const steps=Array.from(document.querySelectorAll('#wiz .wiz-step'));
+  if(!steps.length)return;
+  const dots=Array.from(document.querySelectorAll('#wiz .dot'));
+  const ans={}; let cur=0;
+  function show(i){cur=i; steps.forEach((s,k)=>s.classList.toggle('on',k===i));
+    dots.forEach((d,k)=>d.classList.toggle('active',k<=i));
+    const back=document.getElementById('wiz-back'); if(back)back.style.visibility=(i>0&&i<steps.length-1)?'visible':'hidden';}
+  function choose(k,v,el){ans[k]=v;
+    el.parentElement.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); el.classList.add('sel');
+    setTimeout(()=>{ if(cur<steps.length-2) show(cur+1); else { compute(); show(steps.length-1); } },240);}
+  function compute(){
+    const W={LAND:1,VISA:1,TAX:1,LAW:1,LIFE:1,STAB:1};
+    [groupW[ans.group],prioW[ans.prio],riskW[ans.risk]].forEach(m=>{ if(m) for(const k in m) W[k]=(W[k]||0)+m[k]; });
+    for(const k in W){ if(W[k]<0) W[k]=0; }
+    const ranked=DATA.map(d=>{let n=0,de=0;LENSES.forEach(l=>{n+=W[l]*d.s[LENS_IDX[l]];de+=W[l]*3;});return {d,f:de?Math.round(100*n/de):0};}).sort((a,b)=>b.f-a.f);
+    const top=ranked[0].d, alts=ranked.slice(1,3).map(r=>r.d.c).join(' · ');
+    const s=STAB6[top.c]; const res=s?Math.round((s.pol+s.law+s.safe+s.econ+s.peace+s.clim)/6):null;
+    document.getElementById('wiz-result').innerHTML=
+      `<div class="wr-top">Your starting point → <b>${top.c}</b><span class="wr-fit">${ranked[0].f}/100 fit</span></div>`+
+      `<div class="wr-v">"${top.v}"</div>`+
+      `<div class="wr-row"><span>🛂 Visa route</span> ${VD[top.c]||'—'}</div>`+
+      `<div class="wr-row"><span>🏛️ Legal stack</span> hold the land in a trust / foundation; run the farm as a co-op.</div>`+
+      `<div class="wr-row"><span>🛡️ Resilience</span> ${res!=null?res+'/100 overall — ':''}${top.stab}</div>`+
+      `<div class="wr-row"><span>🧭 Also strong</span> ${alts}</div>`+
+      `<div class="wr-note">Now open the globe, set the sliders to match, and click ${top.c} for the full card.</div>`;
+  }
+  document.querySelectorAll('#wiz .opt').forEach(o=>o.addEventListener('click',()=>choose(o.dataset.k,o.dataset.v,o)));
+  const back=document.getElementById('wiz-back'); if(back)back.addEventListener('click',()=>show(Math.max(0,cur-1)));
+  const rst=document.getElementById('wiz-restart'); if(rst)rst.addEventListener('click',()=>{['group','prio','risk'].forEach(k=>delete ans[k]);document.querySelectorAll('#wiz .opt').forEach(o=>o.classList.remove('sel'));show(0);});
+  show(0);
+})();
 
 /* ============ REVEAL + zoom + comments ============ */
 Reveal.initialize({hash:true,slideNumber:'c/t',width:1280,height:760,margin:0.045,minScale:0.2,maxScale:1.6,
