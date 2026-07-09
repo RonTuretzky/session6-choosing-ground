@@ -161,6 +161,15 @@
 .stbar{flex:1;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
 .stbar>span{display:block;height:100%;border-radius:4px;}
 .stv{flex:0 0 20px;text-align:right;font-family:"JetBrains Mono",monospace;color:var(--accent);}
+/* tax teaching lab */
+#taxlab{max-width:840px;margin:12px auto 0;font-family:"Inter",sans-serif;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(212,163,115,.35);border-radius:9px;padding:12px 16px;}
+#taxlab .pick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px;color:#cdbf9a;}
+#taxlab select{background:#1c1c15;color:var(--wheat);border:1px solid var(--accent);border-radius:5px;padding:4px 7px;font-family:inherit;font-size:12px;}
+#taxlab label{display:flex;align-items:center;gap:5px;font-size:12px;color:#cdbf9a;cursor:pointer;}
+#tax-out{margin-top:10px;}
+.tax-rate{font-size:15px;color:var(--wheat);margin-bottom:4px;} .tax-rate b{color:var(--accent);}
+.tax-why{font-size:12px;color:#e9dfc6;line-height:1.5;}
+.tax-us{margin-top:8px;padding:7px 10px;background:rgba(79,134,198,.14);border-left:3px solid #4f86c6;border-radius:5px;font-size:11.5px;color:#e9dfc6;line-height:1.45;}
 </style>
 </head>
 <body>
@@ -235,21 +244,32 @@
 
 <!-- 7 TAX -->
 <section>
-  <h2>Work the tax bill in four moves</h2>
-  <div class="steps">
-    <div class="step"><div class="n">1</div><div class="b"><h3>Choose territorial over worldwide</h3><p>Georgia, Panama, Paraguay, Costa Rica & Uruguay simply <b>don't tax foreign income</b> — the biggest single lever for remote earners and pensioners.</p></div></div>
-    <div class="step"><div class="n">2</div><div class="b"><h3>Stack a pensioner regime</h3><p>Italy <b>7%</b> flat · Greece <b>7%</b> for 15 yrs · Portugal <b>10%</b> on pensions — and they sit in the exact cheap-land regions.</p></div></div>
-    <div class="step"><div class="n">3</div><div class="b"><h3>Let the co-op be taxed once</h3><p>Patronage dividends are typically taxed a <b>single time, at the member</b> — a structural edge a plain company doesn't get.</p></div></div>
-    <div class="step"><div class="n">4</div><div class="b"><h3>Dodge the three traps</h3><p>US citizens owe tax <b>worldwide</b> (credits, not escape) · golden-visa / NHR regimes are <b>closing</b> (PT/ES/GR, 2023–26) · crypto swings 0% → punitive → illegal.</p></div></div>
+  <h2>Who actually taxes you? Three levers</h2>
+  <p class="small" style="max-width:830px;margin:0 auto">Two taxmen can want a cut — your <b>home country</b> and your <b>new one</b>. Who wins comes down to three levers: <b>where your income comes from</b>, <b>what tax system your new country runs</b>, and <b>your citizenship</b>. Build a case and see the mechanic:</p>
+  <div id="taxlab">
+    <div class="pick">
+      <span>Most of my income is</span>
+      <select id="tax-src">
+        <option value="foreign">a foreign pension / remote salary / investments</option>
+        <option value="local">income from the farm or co-op itself (local)</option>
+      </select>
+      <span>· I move somewhere that taxes</span>
+      <select id="tax-sys">
+        <option value="terr">territorially (only local income)</option>
+        <option value="regime">via a special expat / pensioner regime</option>
+        <option value="world">worldwide (my global income)</option>
+      </select>
+      <label><input type="checkbox" id="tax-us"> I'm a US citizen</label>
+    </div>
+    <div id="tax-out"></div>
   </div>
-  <p class="tiny" style="text-align:center;margin-top:10px">Illustrative effective take on €50k of foreign income, by strategy:</p>
-  <div class="barchart">
+  <p class="tiny" style="text-align:center;margin-top:8px">The spread at a glance — effective take on foreign income:</p>
+  <div class="barchart" style="margin-top:2px">
     <div class="r"><div class="lab"><b>Territorial</b> — Georgia / Panama / Paraguay</div><div class="track"><div class="fill" style="width:3%;background:#fde725"></div></div><div class="val">~0%</div></div>
-    <div class="r"><div class="lab"><b>Pensioner regime</b> — Italy / Greece</div><div class="track"><div class="fill" style="width:9%;background:#9bd84e"></div></div><div class="val">7–10%</div></div>
-    <div class="r"><div class="lab"><b>Standard EU resident</b> — Spain / France</div><div class="track"><div class="fill" style="width:42%;background:#21918c"></div></div><div class="val">35–45%</div></div>
-    <div class="r"><div class="lab"><b>US citizen</b> — taxed wherever you live</div><div class="track"><div class="fill" style="width:55%;background:#3b528b"></div></div><div class="val">worldwide</div></div>
+    <div class="r"><div class="lab"><b>Special regime</b> — Italy / Greece / Portugal</div><div class="track"><div class="fill" style="width:9%;background:#9bd84e"></div></div><div class="val">7–15%</div></div>
+    <div class="r"><div class="lab"><b>Standard worldwide</b> — Spain / France</div><div class="track"><div class="fill" style="width:42%;background:#21918c"></div></div><div class="val">35–45%</div></div>
   </div>
-  <aside class="notes">Rebuilt step-by-step with a chart per feedback. Key correction: cheap-land depopulation countries (Italy/Greece/Portugal) built pensioner regimes overlapping the exact cheap-land regions — tax and land strategy align for a retirement-weighted group. The bar chart is illustrative, not a quote — the point is the spread from ~0% (territorial) to worldwide (US citizen). The golden-visa/NHR window is closing, so 2021 advice is stale.</aside>
+  <aside class="notes">Rebuilt as a teaching tool per feedback — it now teaches the actual mechanic: tax is the interaction of income SOURCE × country SYSTEM × your CITIZENSHIP, not a country ranking. Walk the class through combos: a US-citizen retiree with a foreign pension moving to territorial Panama pays 0% locally but still files to the IRS (FEIE + credits); the same person to worldwide Spain without a regime pays progressive rates; farm income is local-source so it's taxed everywhere, but a co-op is taxed once at the member. The lesson: match your income type to a territorial or special-regime country, and remember a US passport never fully switches off. Regimes are closing (PT/ES/GR 2023–26) — check the year.</aside>
 </section>
 
 <!-- 8 ZONING -->
@@ -1017,6 +1037,31 @@ function computePlan(){
 }
 ['plan-group','plan-prio'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('change',computePlan);});
 computePlan();
+
+/* ============ tax teaching lab ============ */
+function computeTax(){
+  const srcEl=document.getElementById('tax-src'), sysEl=document.getElementById('tax-sys'), out=document.getElementById('tax-out');
+  if(!out||!srcEl||!sysEl)return;
+  const src=srcEl.value, sys=sysEl.value, us=(document.getElementById('tax-us')||{}).checked;
+  let rate, why;
+  if(src==='local'){
+    rate='local income-tax rates apply';
+    why=`Farm income is <b>locally sourced</b>, so <b>every</b> system taxes it — territorial, regime or worldwide alike; you can't move away from tax on money you earn <i>there</i>. The one structural break: run the farm as a <b>cooperative</b> and the surplus is typically taxed <b>once, at the member</b> (patronage dividends), instead of twice like a company.`;
+  } else if(sys==='terr'){
+    rate='<b>0%</b> locally';
+    why=`Territorial systems — Georgia, Panama, Paraguay, Costa Rica, Uruguay — <b>don't tax foreign-source income at all</b>. Your pension, remote salary and dividends land untaxed. This is the single biggest lever there is.`;
+  } else if(sys==='regime'){
+    rate='<b>~7–15% flat</b>';
+    why=`Special expat regimes tax foreign income at a low flat rate: <b>Italy 7%</b> (retirees in small southern towns), <b>Greece 7%</b> for 15 years, <b>Portugal 10%</b> on pensions, <b>Cyprus non-dom 0%</b> on dividends/interest. A little certainty for a small price — but many of these windows are <b>closing</b>, so check the year.`;
+  } else {
+    rate='<b>~20–45% progressive</b>';
+    why=`Worldwide systems — Spain, France, Germany without a special regime — fold your <b>global</b> income into local progressive rates. This is the expensive default, and exactly why people chase the regimes above.`;
+  }
+  const extra = us ? `<div class="tax-us">🇺🇸 <b>But you're a US citizen:</b> you <b>always</b> file to the IRS on your worldwide income, wherever you live. The Foreign Earned Income Exclusion shields ~$130k of <i>earned</i> income and foreign-tax credits offset most of the rest — so you rarely pay twice, but you can never fully switch the US off.</div>` : '';
+  out.innerHTML=`<div class="tax-rate">New-country tax on that income: ${rate}</div><div class="tax-why">${why}</div>${extra}`;
+}
+['tax-src','tax-sys','tax-us'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('change',computeTax);});
+computeTax();
 
 /* ============ REVEAL + zoom + comments ============ */
 Reveal.initialize({hash:true,slideNumber:'c/t',width:1280,height:760,margin:0.045,minScale:0.2,maxScale:1.6,
