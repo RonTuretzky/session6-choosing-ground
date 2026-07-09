@@ -209,6 +209,20 @@
 #rx-country{background:#1c1c15;color:var(--wheat);border:1px solid var(--accent);border-radius:5px;padding:4px 8px;font-family:inherit;font-size:12px;margin-bottom:4px;}
 #rx-radar{width:260px;height:250px;display:block;margin:0 auto;}
 #rx-note{font-size:11px;color:#cdbf9a;margin-top:4px;max-width:290px;line-height:1.4;}
+/* jurisdiction-guessing game */
+#game{max-width:760px;margin:10px auto 0;font-family:"Inter",sans-serif;text-align:left;}
+.g-clues{background:rgba(255,255,255,.04);border:1px solid rgba(212,163,115,.35);border-radius:9px;padding:12px 16px;margin-bottom:12px;}
+.g-clue{font-size:14px;color:#e9dfc6;margin:5px 0;line-height:1.4;}
+.g-opts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.g-opt{background:rgba(255,255,255,.04);border:1px solid rgba(212,163,115,.35);border-radius:8px;color:#e9dfc6;font-family:inherit;font-size:14px;padding:10px 20px;cursor:pointer;transition:all .12s;}
+.g-opt:hover:enabled{border-color:var(--accent);background:rgba(212,163,115,.12);transform:translateY(-2px);}
+.g-opt.correct{background:rgba(94,201,98,.28);border-color:#5ec962;color:#fff;}
+.g-opt.wrong{background:rgba(192,100,90,.28);border-color:#c0645a;}
+#g-reveal{margin-top:12px;font-size:13px;color:#e9dfc6;min-height:22px;line-height:1.5;text-align:center;}
+#g-reveal .v{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--accent);}
+.g-bar{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:12px;color:#9c8f74;}
+#g-next{background:#1c1c15;color:var(--accent);border:1px solid var(--accent);border-radius:16px;padding:5px 14px;cursor:pointer;font-family:inherit;font-size:12px;}
+#g-next:hover{background:rgba(212,163,115,.15);}
 </style>
 </head>
 <body>
@@ -344,6 +358,20 @@
   </table>
   <p class="small" style="margin-top:16px;max-width:840px;margin-left:auto;margin-right:auto">Real groups run a <b>patchwork</b>: retirees on passive-income visas, workers on nomad/entrepreneur visas, a few who won't qualify at all. Budget a lawyer and a staggered, multi-year arrival — <b>Paraguay is the rare place you can move the whole group easily.</b></p>
   <aside class="notes">Reformatted per feedback — full-width table with room to breathe. The most important honesty in the deck: the fantasy is "we all move together next spring"; the reality is a 12–24 month staggered process where some members may not qualify. Paraguay stands out for actually moving a whole group (no income proof, PR in 2 years); Georgia's 1-year visa-free entry lets a group land and plan.</aside>
+</section>
+
+<!-- MID-DECK EXERCISE: guess the jurisdiction -->
+<section>
+  <p class="kicker">Class exercise</p>
+  <h2>Read the jurisdiction 🕵️</h2>
+  <p class="small" style="max-width:790px;margin:0 auto">Three tells, four candidates. Name the country — then argue about it. (This is exactly the pattern-reading the globe automates.)</p>
+  <div id="game">
+    <div class="g-clues" id="g-clues"></div>
+    <div class="g-opts" id="g-opts"></div>
+    <div id="g-reveal"></div>
+    <div class="g-bar"><span id="g-score">Round 1 · 0 correct</span><button id="g-next">Next country →</button></div>
+  </div>
+  <aside class="notes">A change-of-pace class exercise in the middle of the deck. Run it out loud: read the three clues, let people commit to a guess and defend it before you reveal. Each round reinforces the rubric — cheap land that you can't own, an easy visa shadowed by weak institutions, high QoL walled off by immigration. Eight rounds, reshuffled options; "Next" cycles. It primes them to read the globe that follows.</aside>
 </section>
 
 <!-- GLOBE + QUESTIONNAIRE (merged) -->
@@ -1035,7 +1063,7 @@ function initGlobe(){
       const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]); downXY=null;
       if(moved>6)return; const i=pick(e); if(i>=0){showCard(i);controls.autoRotate=false;}});
     globe={inited:true,scene,camera,renderer,controls,markers,group,R,fills:[],useFill:false,metric:"comp",selected:-1,quiz:null};
-    recolorGlobe(); buildCountryLayer();
+    recolorGlobe(); /* buildCountryLayer() disabled — filled-country globe broke rendering; reverted to working dot markers */
     (function loop(){ if(!globe.inited)return; requestAnimationFrame(loop);
       globe.markers.forEach(m=>{const s=1+0.12*Math.sin(Date.now()*0.003+m.userData.i); if(m.userData.halo)m.userData.halo.scale.setScalar(s);});
       controls.update(); renderer.render(scene,camera); })();
@@ -1269,6 +1297,39 @@ computeTax();
   sel.addEventListener('change',()=>{country=sel.value;renderRadar();renderBoard();});
   country=has.map(d=>({d,v:stabBlend(d,'overall')})).sort((a,b)=>b.v-a.v)[0].d.c;
   sel.value=country; renderBoard(); renderRadar();
+})();
+
+/* ============ mid-deck exercise: guess the jurisdiction ============ */
+(function(){
+  const cluesEl=document.getElementById('g-clues'); if(!cluesEl)return;
+  const optsEl=document.getElementById('g-opts'), revEl=document.getElementById('g-reveal'), scoreEl=document.getElementById('g-score'), nextBtn=document.getElementById('g-next');
+  const ROUNDS=[
+    {a:"Paraguay",clues:["🌾 The cheapest farmland in the Americas — Chaco land from ~$50–600/ha","🛂 Temporary residency with NO income proof; permanent in just 2 years","⚠️ …but weak institutions (CPI 24/100)"],opts:["Paraguay","Uruguay","Bolivia","Argentina"]},
+    {a:"Japan",clues:["🏚️ ~9 million empty 'akiya' houses, some near free","🏥 Universal healthcare, among the safest places on Earth","🛂 …but no realistic way to move a whole group in"],opts:["Japan","South Korea","Vietnam","Thailand"]},
+    {a:"Georgia",clues:["🛂 A full YEAR visa-free on arrival, no paperwork, for ~95 nationalities","💸 Zero tax on foreign income; 1% for small business","🚫 …but foreigners are barred from farmland, amid a political crisis"],opts:["Georgia","Armenia","Serbia","Albania"]},
+    {a:"Portugal",clues:["🕊️ Ranked the 7th most peaceful country in the world","🏡 Cheap interior farmland foreigners can buy freely","⏳ …but its famous 5-year citizenship just became 10"],opts:["Portugal","Spain","Greece","Italy"]},
+    {a:"New Zealand",clues:["🛡️ The classic collapse hedge: remote, safe, top quality of life","🚫 …but foreigners are largely BANNED from buying land, and the visa is a wall"],opts:["New Zealand","Canada","Australia","Uruguay"]},
+    {a:"Bolivia",clues:["🌱 Among the cheapest land anywhere, with a Mennonite farm-colony precedent","🔥 …but a live 2026 crisis: shortages, unrest, state of emergency"],opts:["Bolivia","Paraguay","Peru","Ecuador"]},
+    {a:"Costa Rica",clues:["🌿 'Pura vida' — no army, stable, easy pensionado visa, own land freely","💰 …you just pay more for the land itself"],opts:["Costa Rica","Panama","Uruguay","Mexico"]},
+    {a:"Spain",clues:["🏘️ 'España vaciada' — emptying interior villages, marginal land ~€1,000–6,000/ha","⚖️ A purpose-built communal-land cooperative law (Arts 94–97)","🛂 …but the golden visa ended in 2025 and citizenship takes 10 years"],opts:["Spain","Italy","Portugal","France"]}
+  ];
+  let idx=0, score=0, answered=false;
+  const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+  function render(){const r=ROUNDS[idx]; answered=false;
+    cluesEl.innerHTML=r.clues.map(c=>`<div class="g-clue">${c}</div>`).join('');
+    optsEl.innerHTML=shuffle(r.opts.slice()).map(o=>`<button class="g-opt" data-o="${o}">${o}</button>`).join('');
+    optsEl.querySelectorAll('.g-opt').forEach(b=>b.addEventListener('click',()=>guess(b,r)));
+    revEl.innerHTML=''; scoreEl.textContent=`Round ${idx+1}/${ROUNDS.length} · ${score} correct`;
+  }
+  function guess(b,r){ if(answered)return; answered=true;
+    optsEl.querySelectorAll('.g-opt').forEach(x=>{x.disabled=true; if(x.dataset.o===r.a)x.classList.add('correct'); else if(x===b)x.classList.add('wrong');});
+    if(b.dataset.o===r.a) score++;
+    const d=DATA.find(x=>x.c===r.a);
+    revEl.innerHTML=`${b.dataset.o===r.a?'✅ Yes — ':'❌ It was '}<b style="color:var(--wheat)">${r.a}</b>. <span class="v">"${d?d.v:''}"</span>`;
+    scoreEl.textContent=`Round ${idx+1}/${ROUNDS.length} · ${score} correct`;
+  }
+  nextBtn.addEventListener('click',()=>{ idx=(idx+1)%ROUNDS.length; render(); });
+  render();
 })();
 
 /* ============ REVEAL + zoom + comments ============ */
