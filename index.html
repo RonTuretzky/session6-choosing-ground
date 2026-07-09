@@ -194,6 +194,21 @@
 .wr-v{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--accent);font-size:16px;margin:8px 0;}
 .wr-row{font-size:12px;color:#e9dfc6;line-height:1.5;margin:4px 0;} .wr-row>span:first-child{color:#9c8f74;display:inline-block;min-width:98px;}
 .wr-note{margin-top:10px;font-size:11px;color:#9c8f74;font-style:italic;}
+/* resilience explorer */
+#resx{display:flex;gap:22px;justify-content:center;align-items:flex-start;margin-top:12px;flex-wrap:wrap;text-align:left;font-family:"Inter",sans-serif;}
+.rx-left{flex:1 1 360px;max-width:430px;} .rx-right{flex:0 0 300px;text-align:center;}
+.rx-scenarios{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.rx-sc{font-size:11px;background:#1c1c15;color:var(--accent);border:1px solid var(--accent);border-radius:14px;padding:4px 10px;cursor:pointer;}
+.rx-sc.on{background:var(--accent);color:#14140f;font-weight:600;}
+#rx-board{list-style:none;padding:0;margin:6px 0 0;}
+#rx-board li{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:5px;cursor:pointer;font-size:12px;}
+#rx-board li:hover{background:rgba(212,163,115,.08);} #rx-board li.on{background:rgba(212,163,115,.18);}
+#rx-board .rk{font-family:"JetBrains Mono",monospace;color:var(--accent);width:16px;} #rx-board .nm{flex:1;color:var(--wheat);}
+#rx-board .bw{flex:0 0 90px;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;} #rx-board .bf{display:block;height:100%;}
+#rx-board .vv{font-family:"JetBrains Mono",monospace;color:#cdbf9a;width:22px;text-align:right;}
+#rx-country{background:#1c1c15;color:var(--wheat);border:1px solid var(--accent);border-radius:5px;padding:4px 8px;font-family:inherit;font-size:12px;margin-bottom:4px;}
+#rx-radar{width:260px;height:250px;display:block;margin:0 auto;}
+#rx-note{font-size:11px;color:#cdbf9a;margin-top:4px;max-width:290px;line-height:1.4;}
 </style>
 </head>
 <body>
@@ -382,6 +397,31 @@
   </div>
   <p class="tiny" id="globe-fallback" style="display:none;color:#c0645a">WebGL globe unavailable here — click a country in the archetype cards instead.</p>
   <aside class="notes">Globe and questionnaire merged into one interactive page per feedback. Drive it live: recolor by LAND to show the foreign-ownership cliff; move the sliders and watch the globe + top-6 re-rank. Click any country for its full card — now including visa specifics (thresholds, durations, processing time, PR/citizenship timeline). The bright cluster is the thesis: depopulating Europe + easy-residency Latin America. Click Paraguay, Uruguay, Georgia, Spain, Costa Rica for the strongest all-round cases; Nepal, Brazil, Bolivia for instructive red lights.</aside>
+</section>
+
+<!-- RESILIENCE EXPLORER -->
+<section>
+  <h2>Stress-test your hedge <span class="hint">— pick a shock</span></h2>
+  <p class="small" style="max-width:830px;margin:0 auto">A commune is partly a bet against collapse. Choose the shock you're bracing for and the six stability dimensions re-weight — the leaderboard and the radar show <b>who actually weathers it</b>.</p>
+  <div id="resx">
+    <div class="rx-left">
+      <div class="rx-scenarios">
+        <button class="rx-sc on" data-s="overall">Overall</button>
+        <button class="rx-sc" data-s="currency">💱 Currency crisis</button>
+        <button class="rx-sc" data-s="war">⚔️ War in the region</button>
+        <button class="rx-sc" data-s="climate">🌡️ Climate shock</button>
+        <button class="rx-sc" data-s="authoritarian">🏛️ Authoritarian turn</button>
+      </div>
+      <p class="hint" style="margin:0">Most resilient — click any to inspect its radar →</p>
+      <ol id="rx-board"></ol>
+    </div>
+    <div class="rx-right">
+      <select id="rx-country"></select>
+      <svg id="rx-radar" viewBox="0 0 260 250"></svg>
+      <div id="rx-note"></div>
+    </div>
+  </div>
+  <aside class="notes">A dedicated stability interactive per feedback. The six dimensions — political, rule of law, safety, economic, peace/conflict, climate — are grounded in GPI 2025, WJP 2025, ND-GAIN, Fragile States, CPI and Numbeo. Drive it: switch to "currency crisis" and Turkey/Argentina/Bolivia sink while dollarized Panama/Ecuador and the Nordics hold; switch to "war in the region" and the Russia-border Baltics and Armenia drop; "climate shock" punishes arid/tropical exposure. The teaching point: "stability" isn't one number — it depends entirely on which collapse you're hedging against. Numbers are a synthesis; scan the Sources slide to verify.</aside>
 </section>
 
 <!-- ARCHETYPES -->
@@ -1191,8 +1231,44 @@ computeTax();
   }
   document.querySelectorAll('#wiz .opt').forEach(o=>o.addEventListener('click',()=>choose(o.dataset.k,o.dataset.v,o)));
   const back=document.getElementById('wiz-back'); if(back)back.addEventListener('click',()=>show(Math.max(0,cur-1)));
-  const rst=document.getElementById('wiz-restart'); if(rst)rst.addEventListener('click',()=>{['group','prio','risk'].forEach(k=>delete ans[k]);document.querySelectorAll('#wiz .opt').forEach(o=>o.classList.remove('sel'));show(0);});
+  const rst=document.getElementById('wiz-restart'); if(rst)rst.addEventListener('click',()=>{['group','prio','land','climate','region','risk'].forEach(k=>delete ans[k]);document.querySelectorAll('#wiz .opt').forEach(o=>o.classList.remove('sel'));show(0);});
   show(0);
+})();
+
+/* ============ resilience explorer (stress-test your hedge) ============ */
+(function(){
+  const board=document.getElementById('rx-board'); if(!board)return;
+  const sel=document.getElementById('rx-country'), radar=document.getElementById('rx-radar'), note=document.getElementById('rx-note');
+  const SCEN_LABEL={overall:'overall resilience',currency:'a currency crisis',war:'war in the region',climate:'a climate shock',authoritarian:'an authoritarian turn'};
+  let scen='overall', country=null;
+  const has=DATA.filter(d=>STAB6[d.c]);
+  sel.innerHTML=has.slice().sort((a,b)=>a.c.localeCompare(b.c)).map(d=>`<option value="${d.c}">${d.c}</option>`).join('');
+  function renderBoard(){
+    const ranked=has.map(d=>({d,v:Math.round(stabBlend(d,scen))})).sort((a,b)=>b.v-a.v);
+    board.innerHTML=ranked.slice(0,8).map((r,i)=>`<li data-c="${r.d.c}" class="${country===r.d.c?'on':''}"><span class="rk">${i+1}</span><span class="nm">${r.d.c}</span><span class="bw"><span class="bf" style="width:${r.v}%;background:${scoreColor(r.v,100)}"></span></span><span class="vv">${r.v}</span></li>`).join('');
+    board.querySelectorAll('li').forEach(li=>li.addEventListener('click',()=>{country=li.dataset.c;sel.value=country;renderRadar();renderBoard();}));
+  }
+  function renderRadar(){
+    const s=STAB6[country]; if(!s){radar.innerHTML='';return;}
+    const cx=130,cy=125,maxR=90, ang=i=>(-90+i*60)*Math.PI/180;
+    let g='';
+    [0.25,0.5,0.75,1].forEach(f=>{const p=STAB_DIMS.map((k,i)=>(cx+maxR*f*Math.cos(ang(i)))+','+(cy+maxR*f*Math.sin(ang(i)))).join(' ');g+=`<polygon points="${p}" fill="none" stroke="rgba(212,163,115,.15)" stroke-width="1"/>`;});
+    STAB_DIMS.forEach((k,i)=>{const ex=cx+maxR*Math.cos(ang(i)),ey=cy+maxR*Math.sin(ang(i));
+      g+=`<line x1="${cx}" y1="${cy}" x2="${ex}" y2="${ey}" stroke="rgba(212,163,115,.2)"/>`;
+      const lx=cx+(maxR+17)*Math.cos(ang(i)),ly=cy+(maxR+17)*Math.sin(ang(i));
+      g+=`<text x="${lx}" y="${ly}" font-size="9" fill="#cdbf9a" text-anchor="middle" dominant-baseline="middle" font-family="Inter,sans-serif">${STAB_LABELS[i]}</text>`;});
+    const over=Math.round(stabBlend(DATA.find(d=>d.c===country),scen)), col=scoreColor(over,100);
+    const dp=STAB_DIMS.map((k,i)=>{const r=s[k]/100*maxR;return (cx+r*Math.cos(ang(i)))+','+(cy+r*Math.sin(ang(i)));}).join(' ');
+    g+=`<polygon points="${dp}" fill="${col}" fill-opacity="0.28" stroke="${col}" stroke-width="2"/>`;
+    STAB_DIMS.forEach((k,i)=>{const r=s[k]/100*maxR;g+=`<circle cx="${cx+r*Math.cos(ang(i))}" cy="${cy+r*Math.sin(ang(i))}" r="2.5" fill="${col}"/>`;});
+    g+=`<text x="${cx}" y="${cy-2}" font-size="20" font-weight="700" fill="${col}" text-anchor="middle" font-family="Inter,sans-serif">${over}</text><text x="${cx}" y="${cy+13}" font-size="8" fill="#9c8f74" text-anchor="middle" font-family="Inter,sans-serif">/100</text>`;
+    radar.innerHTML=g;
+    note.innerHTML=`<b style="color:var(--wheat)">${country}</b> vs <b>${SCEN_LABEL[scen]}</b> → <span style="color:${col};font-family:'JetBrains Mono',monospace">${over}/100</span>. ${DATA.find(d=>d.c===country).stab}`;
+  }
+  document.querySelectorAll('#resx .rx-sc').forEach(b=>b.addEventListener('click',()=>{scen=b.dataset.s;document.querySelectorAll('#resx .rx-sc').forEach(x=>x.classList.toggle('on',x===b));renderBoard();renderRadar();}));
+  sel.addEventListener('change',()=>{country=sel.value;renderRadar();renderBoard();});
+  country=has.map(d=>({d,v:stabBlend(d,'overall')})).sort((a,b)=>b.v-a.v)[0].d.c;
+  sel.value=country; renderBoard(); renderRadar();
 })();
 
 /* ============ REVEAL + zoom + comments ============ */
