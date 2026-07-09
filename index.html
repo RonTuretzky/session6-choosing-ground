@@ -416,7 +416,7 @@
   <p class="kicker">Session 6 · Choosing Ground</p>
   <h2>Build your starting point</h2>
   <div id="wiz">
-    <div class="wiz-prog"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="wiz-prog"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
     <div class="wiz-step on" data-step="0">
       <div class="wiz-q">1 · Who's in your group?</div>
       <div class="opts">
@@ -436,14 +436,40 @@
       </div>
     </div>
     <div class="wiz-step" data-step="2">
-      <div class="wiz-q">3 · How much risk can you stomach?</div>
+      <div class="wiz-q">3 · The land itself — do you need to own it?</div>
+      <div class="opts">
+        <button class="opt" data-k="land" data-v="freehold">📜 Must own freehold<br><small>title in our name</small></button>
+        <button class="opt" data-k="land" data-v="lease">🤝 A long lease is fine</button>
+        <button class="opt" data-k="land" data-v="access">🌍 Just need secure access</button>
+      </div>
+    </div>
+    <div class="wiz-step" data-step="3">
+      <div class="wiz-q">4 · What climate do you want?</div>
+      <div class="opts">
+        <button class="opt" data-k="climate" data-v="temperate">🍂 Temperate<br><small>four seasons</small></button>
+        <button class="opt" data-k="climate" data-v="warm">☀️ Warm &amp; sunny<br><small>subtropical / tropical</small></button>
+        <button class="opt" data-k="climate" data-v="any">🌡️ Doesn't matter</button>
+      </div>
+    </div>
+    <div class="wiz-step" data-step="4">
+      <div class="wiz-q">5 · Any part of the world you lean toward?</div>
+      <div class="opts">
+        <button class="opt" data-k="region" data-v="europe">🇪🇺 Europe &amp; the Med</button>
+        <button class="opt" data-k="region" data-v="americas">🌎 The Americas</button>
+        <button class="opt" data-k="region" data-v="asia">🌏 Asia-Pacific</button>
+        <button class="opt" data-k="region" data-v="africa">🌍 Africa</button>
+        <button class="opt" data-k="region" data-v="any">🧭 Open to anywhere</button>
+      </div>
+    </div>
+    <div class="wiz-step" data-step="5">
+      <div class="wiz-q">6 · How much risk can you stomach?</div>
       <div class="opts">
         <button class="opt" data-k="risk" data-v="safe">🛡️ Rock-solid only<br><small>stability above all</small></button>
         <button class="opt" data-k="risk" data-v="balanced">⚖️ Balanced</button>
         <button class="opt" data-k="risk" data-v="bold">🎲 Trade stability for cost</button>
       </div>
     </div>
-    <div class="wiz-step" data-step="3"><div id="wiz-result"></div></div>
+    <div class="wiz-step" data-step="6"><div id="wiz-result"></div></div>
     <div class="wiz-nav">
       <button id="wiz-back" class="preset" style="visibility:hidden">← Back</button>
       <button id="wiz-restart" class="preset">↺ Start over</button>
@@ -1129,6 +1155,9 @@ computeTax();
   const groupW={ret:{LIFE:3,TAX:3,STAB:2,VISA:1},remote:{TAX:3,VISA:3,LAND:2},fam:{LIFE:3,LAW:2,STAB:3},young:{LAND:3,VISA:3,TAX:2,LIFE:0}};
   const prioW={own:{LAND:3,LAW:3},cost:{LAND:3,TAX:2},move:{VISA:4},qol:{LIFE:3,STAB:2}};
   const riskW={safe:{STAB:3,LIFE:1},balanced:{},bold:{STAB:-1,LAND:2,TAX:1}};
+  const landW={freehold:{LAND:3,LAW:2},lease:{LAND:1,VISA:1},access:{VISA:1,LIFE:1}};
+  const REGGRP={europe:['Europe','Eurasia','MENA'],americas:['Latin America','North America'],asia:['Asia','Oceania'],africa:['Africa']};
+  const warmth=d=>{const a=Math.abs(d.lat);return a<27?'warm':(a<49?'temperate':'cold');};
   const steps=Array.from(document.querySelectorAll('#wiz .wiz-step'));
   if(!steps.length)return;
   const dots=Array.from(document.querySelectorAll('#wiz .dot'));
@@ -1141,9 +1170,14 @@ computeTax();
     setTimeout(()=>{ if(cur<steps.length-2) show(cur+1); else { compute(); show(steps.length-1); } },240);}
   function compute(){
     const W={LAND:1,VISA:1,TAX:1,LAW:1,LIFE:1,STAB:1};
-    [groupW[ans.group],prioW[ans.prio],riskW[ans.risk]].forEach(m=>{ if(m) for(const k in m) W[k]=(W[k]||0)+m[k]; });
+    [groupW[ans.group],prioW[ans.prio],landW[ans.land],riskW[ans.risk]].forEach(m=>{ if(m) for(const k in m) W[k]=(W[k]||0)+m[k]; });
     for(const k in W){ if(W[k]<0) W[k]=0; }
-    const ranked=DATA.map(d=>{let n=0,de=0;LENSES.forEach(l=>{n+=W[l]*d.s[LENS_IDX[l]];de+=W[l]*3;});return {d,f:de?Math.round(100*n/de):0};}).sort((a,b)=>b.f-a.f);
+    const reg=ans.region, clm=ans.climate;
+    const ranked=DATA.map(d=>{let n=0,de=0;LENSES.forEach(l=>{n+=W[l]*d.s[LENS_IDX[l]];de+=W[l]*3;});
+      let f=de?100*n/de:0;
+      if(reg&&reg!=='any'&&REGGRP[reg]&&REGGRP[reg].indexOf(d.r)>=0) f+=12;
+      if(clm&&clm!=='any'){const w=warmth(d); if(clm==='temperate'){f+=(w==='temperate'?10:(w==='cold'?5:0));} else if(clm==='warm'){f+=(w==='warm'?10:(w==='temperate'?4:0));}}
+      return {d,f:Math.min(100,Math.round(f))};}).sort((a,b)=>b.f-a.f);
     const top=ranked[0].d, alts=ranked.slice(1,3).map(r=>r.d.c).join(' · ');
     const s=STAB6[top.c]; const res=s?Math.round((s.pol+s.law+s.safe+s.econ+s.peace+s.clim)/6):null;
     document.getElementById('wiz-result').innerHTML=
